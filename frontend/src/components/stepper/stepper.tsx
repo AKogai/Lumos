@@ -100,7 +100,7 @@ export const Stepper = ({ memorial }: { memorial: MemorialCaseResponse }) => {
       setIsNextClicked(true);
       if (isLastStep) {
         const result = await mutateAsync({
-          caseId: '1',
+          caseId: memorial.id,
           tone: res.tone,
           language: 'language',
           userInfo: res.relationship
