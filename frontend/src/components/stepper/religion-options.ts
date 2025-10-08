@@ -1,1 +1,23 @@
-export const religionOptions = ['religious', 'cultural', 'spiritual'];
+export const religionOptions = [
+  'Catholic',
+  'Protestant',
+  'Muslim',
+  'Buddhist',
+  'Jewish',
+  'Baptist',
+  'Hindu',
+  'New Apostolic',
+  'Serbian Orthodox',
+  'Romanian Orthodox',
+  'Russian Orthodox',
+  'Greek Orthodox',
+  'Bulgarian Orthodox',
+  "Jehovah's Witnesses",
+  'Ukrainian Orthodox',
+  'Syrian Orthodox',
+  'Free Religious',
+  'Evangelical Lutheran',
+  'Evangelical Methodist',
+  'Evangelical Free Church',
+  'Armenian Apostolic'
+];
