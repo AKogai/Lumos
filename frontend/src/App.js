@@ -7,7 +7,8 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/health')
+    const apiUrl = process.env.REACT_APP_API_URL || '/api/health';
+    fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
         setHealth(data);
