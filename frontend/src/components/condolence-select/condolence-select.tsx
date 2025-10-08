@@ -11,14 +11,14 @@ export const CondolenceSelect = ({
   onAfterSave: (selectedCondolence: string, name: string) => void;
 }) => {
   const [name, setName] = useState('');
-  const [condolence, setCondolence] = useState(suggestions.familyMessage || '');
-  const [selectedIdx, setSelectedIdx] = useState<string>('familyMessage');
+  const [condolence, setCondolence] = useState(suggestions?.familyMessage || '');
+  const [selectedKey, setSelectedKey] = useState<string>('familyMessage');
 
-  const updateSelectedIdx = (key: string) => {
-    if (key !== selectedIdx) {
+  const updateSelectedKey = (key: string) => {
+    if (key !== selectedKey) {
       setCondolence(suggestions[key]);
     }
-    setSelectedIdx(key);
+    setSelectedKey(key);
   };
 
   const handleSaveCondolence = () => {
@@ -35,11 +35,11 @@ export const CondolenceSelect = ({
             padding: 2,
             borderStyle: 'solid',
             borderWidth: 1,
-            borderColor: key === selectedIdx ? theme.palette.primary.main : ' #ccc',
+            borderColor: key === selectedKey ? theme.palette.primary.main : ' #ccc',
             borderRadius: 1,
             cursor: 'pointer'
           })}
-          onClick={() => updateSelectedIdx(key)}
+          onClick={() => updateSelectedKey(key)}
         >
           <Typography>{s}</Typography>
         </Box>
