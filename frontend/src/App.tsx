@@ -7,11 +7,13 @@ import { useQuery } from '@tanstack/react-query';
 import { getCases } from './api/funeral-cases';
 import { enqueueSnackbar } from 'notistack';
 import { MemorialCard } from './components/memorial-card/memorial-card';
+import { MemorialDetails } from './components/memorial-details/memorial-details';
 
 function App() {
   const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [isWritingCondolence, setIsWritingCondolence] = useState(false);
 
   useEffect(() => {
     const apiUrl = `${process.env.REACT_APP_API_URL}/api/health`;
@@ -33,12 +35,13 @@ function App() {
     enabled: !!health && !loading
   });
 
-  const handleWriteCondolence = (profile) => {
-    setSelectedProfile(profile);
+  const handleWriteCondolence = () => {
+    setIsWritingCondolence(true);
   };
 
   const handleBackToList = () => {
     setSelectedProfile(null);
+    setIsWritingCondolence(false);
   };
 
   return (
@@ -53,24 +56,31 @@ function App() {
             <h2 className="section-title">Remembering our loved ones</h2>
             <div className="profiles-grid">
               {memorials?.data?.map((p) => (
-                <MemorialCard key={p.id} memorial={p} handleWriteCondolence={handleWriteCondolence} />
+                <MemorialCard key={p.id} memorial={p} openMemorialDetails={setSelectedProfile} />
               ))}
             </div>
           </>
         ) : (
-          <div className="memorial-stepper">
-            <Button variant="outlined" onClick={handleBackToList}>
+          <>
+            <Button variant="outlined" onClick={handleBackToList} sx={{ mb: 2 }}>
               ← Back to list
             </Button>
-            <h2 className="section-title">
-              Write a condolence for {selectedProfile.firstName} {selectedProfile.lastName}
-            </h2>
-            <ErrorBoundary fallback={<Typography>Something went wrong in the Stepper component.</Typography>}>
-              {/* TODO: We could pass the id to the Stepper component */}
-              {/* <Stepper profile={selectedProfile} /> */}
-              <Stepper />
-            </ErrorBoundary>
-          </div>
+            {isWritingCondolence ? (
+              <>
+                <ErrorBoundary fallback={<Typography>Something went wrong in the Stepper component.</Typography>}>
+                  <Stepper memorial={selectedProfile} />
+                </ErrorBoundary>
+              </>
+            ) : (
+              <>
+                <MemorialDetails
+                  selectedProfile={selectedProfile}
+                  handleBackToList={handleBackToList}
+                  handleWriteCondolence={handleWriteCondolence}
+                />
+              </>
+            )}
+          </>
         )}
       </main>
     </div>

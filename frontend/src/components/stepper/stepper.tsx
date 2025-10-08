@@ -19,6 +19,7 @@ import { relationshipOptions } from './relationship-options';
 import { toneOptions } from './tone-options';
 import { useContentRequest } from '../../hooks/use-content-request';
 import { contextOptions } from './context-options';
+import { MemorialCaseResponse } from '../../api/funeral-cases';
 
 interface StepConf {
   label: string;
@@ -35,7 +36,7 @@ type ResType = {
 
 const defaultValue = { relationship: '', tone: '', context: '', memory: '', knowsForHowLong: '' };
 
-export const Stepper = () => {
+export const Stepper = ({ memorial }: { memorial: MemorialCaseResponse }) => {
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [res, setRes] = useState<ResType>(defaultValue);

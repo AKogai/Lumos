@@ -1,6 +1,19 @@
-export const MemorialCard = ({ memorial, handleWriteCondolence }) => {
+import { Button } from '@mui/material';
+import { MemorialCaseResponse } from '../../api/funeral-cases';
+
+export const MemorialCard = ({
+  memorial,
+  handleWriteCondolence,
+  openMemorialDetails,
+  selectedMemorialId
+}: {
+  memorial: MemorialCaseResponse;
+  handleWriteCondolence?: () => void;
+  openMemorialDetails?: (memorial: MemorialCaseResponse) => void;
+  selectedMemorialId?: string;
+}) => {
   return (
-    <div className="profile-card" key={memorial.id}>
+    <div className={`profile-card ${selectedMemorialId ? 'details-view' : ''}`} key={memorial.id}>
       <img
         src={
           memorial.profileImageUrl ||
@@ -22,9 +35,12 @@ export const MemorialCard = ({ memorial, handleWriteCondolence }) => {
         <p className="location">
           {memorial.placeOfBirth} → {memorial.placeOfDeath}
         </p>
-        <button type="button" className="read-more" onClick={() => handleWriteCondolence(memorial)}>
-          Write condolence →
-        </button>
+        <Button
+          sx={{ mt: 2 }}
+          onClick={() => (selectedMemorialId ? handleWriteCondolence() : openMemorialDetails(memorial))}
+        >
+          {selectedMemorialId ? 'Write condolence →' : 'View details'}
+        </Button>
       </div>
     </div>
   );

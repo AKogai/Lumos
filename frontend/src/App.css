@@ -42,7 +42,7 @@ body {
   transition: transform 0.2s ease;
 }
 
-.profile-card:hover {
+.profile-card:not(.details-view):hover {
   transform: translateY(-4px);
 }
 
