@@ -10,7 +10,7 @@ export const MemorialCard = ({
 }: {
   memorial: MemorialCaseResponse;
   handleWriteCondolence?: () => void;
-  openMemorialDetails?: (memorial: MemorialCaseResponse) => void;
+  openMemorialDetails?: (memorialId: number) => void;
   selectedMemorialId?: string;
 }) => {
   return (
@@ -67,7 +67,7 @@ export const MemorialCard = ({
         <Button
           variant="contained"
           sx={{ mt: 2 }}
-          onClick={() => (selectedMemorialId ? handleWriteCondolence() : openMemorialDetails(memorial))}
+          onClick={() => (selectedMemorialId ? handleWriteCondolence() : openMemorialDetails(memorial.id))}
         >
           <Typography fontWeight="500">{selectedMemorialId ? 'Write condolence →' : 'View details'}</Typography>
         </Button>

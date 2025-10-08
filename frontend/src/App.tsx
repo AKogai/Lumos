@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import './App.css';
 import { Stepper } from './components/stepper/stepper';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -12,7 +12,7 @@ import { MemorialDetails } from './components/memorial-details/memorial-details'
 function App() {
   const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [selectedProfileId, setSelectedProfileId] = useState(null);
   const [isWritingCondolence, setIsWritingCondolence] = useState(false);
 
   useEffect(() => {
@@ -40,9 +40,14 @@ function App() {
   };
 
   const handleBackToList = () => {
-    setSelectedProfile(null);
+    setSelectedProfileId(null);
     setIsWritingCondolence(false);
   };
+
+  const selectedProfile = useMemo(
+    () => memorials?.find((p) => p.id === selectedProfileId),
+    [memorials, selectedProfileId]
+  );
 
   return (
     <>
@@ -69,7 +74,7 @@ function App() {
           margin: '0 auto'
         })}
       >
-        {!selectedProfile ? (
+        {!selectedProfileId ? (
           <>
             <Typography sx={(theme) => ({ marginBottom: theme.spacing(4) })} variant="h3">
               Remembering our loved ones
@@ -82,7 +87,7 @@ function App() {
               })}
             >
               {memorials?.map((p) => (
-                <MemorialCard key={p.id} memorial={p} openMemorialDetails={setSelectedProfile} />
+                <MemorialCard key={p.id} memorial={p} openMemorialDetails={setSelectedProfileId} />
               ))}
             </Box>
           </>
