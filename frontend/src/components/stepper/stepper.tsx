@@ -42,7 +42,7 @@ export const Stepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   // TODO: shape the res as needed for posting to backend - this is just a WIP
   const [res, setRes] = useState<ResType>(defaultValue);
-  const { mutateAsync, data, error, isPending } = useContentRequest();
+  const { mutateAsync, data, error, isPending, reset } = useContentRequest();
 
   const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep]);
 
@@ -68,23 +68,40 @@ export const Stepper = () => {
   );
 
   const handleNext = async () => {
-    setIsNextClicked(true);
-    if (isLastStep) {
-      await mutateAsync({ caseId: '1', tone: 'tone', language: 'language', userInfo: 'userInfo' });
-    }
-    if (isCurrentStepValid) {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      setIsNextClicked(false);
+    try {
+      setIsNextClicked(true);
+      if (isLastStep) {
+        const result = await mutateAsync({
+          caseId: '1',
+          tone: 'tone',
+          language: 'language',
+          userInfo: 'userInfo'
+        }).catch(() => {
+          // Error is already handled by React Query and available in `error` prop
+          return null;
+        });
+        if (!result) return;
+      }
+      if (isCurrentStepValid) {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setIsNextClicked(false);
+      }
+    } catch (e) {
+      console.error('error? ', e);
     }
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    if (error) {
+      reset();
+    }
   };
 
   const handleReset = () => {
     setActiveStep(0);
     setRes(defaultValue);
+    reset();
   };
 
   const updateRes = useCallback((value) => {
@@ -160,18 +177,11 @@ export const Stepper = () => {
             );
           })}
         </MuiStepper>
+        {error && <Typography color="error">Error: {error.message}</Typography>}
       </Paper>
       {activeStep === steps.length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography>
-            {data
-              ? `Content Suggestion: ${data.openaiResponse}`
-              : isPending
-                ? 'Loading...'
-                : error
-                  ? `Error: ${error.message}`
-                  : 'Pending...'}
-          </Typography>
+          {data && <Typography>Content suggestion: {data.openaiResponse}</Typography>}
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             Reset
           </Button>

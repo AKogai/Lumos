@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import { Stepper } from './components/stepper/stepper';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Typography } from '@mui/material';
 
 function App() {
   const [health, setHealth] = useState(null);
@@ -38,7 +40,11 @@ function App() {
             </div>
           )}
 
-          {!loading && !error && <Stepper />}
+          {!loading && !error && (
+            <ErrorBoundary fallback={<Typography>Something went wrong in the Stepper component.</Typography>}>
+              <Stepper />
+            </ErrorBoundary>
+          )}
         </div>
       </header>
     </div>
