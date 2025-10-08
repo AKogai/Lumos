@@ -28,22 +28,23 @@ export const CondolenceSelect = ({
 
   return (
     <Stack spacing={2} direction="column">
-      {Object.entries(suggestions)?.map(([key, s], index) => (
-        <Box
-          key={index}
-          sx={(theme) => ({
-            padding: 2,
-            borderStyle: 'solid',
-            borderWidth: 1,
-            borderColor: key === selectedKey ? theme.palette.primary.main : ' #ccc',
-            borderRadius: 1,
-            cursor: 'pointer'
-          })}
-          onClick={() => updateSelectedKey(key)}
-        >
-          <Typography>{s}</Typography>
-        </Box>
-      ))}
+      {suggestions &&
+        Object.entries(suggestions)?.map(([key, s], index) => (
+          <Box
+            key={index}
+            sx={(theme) => ({
+              padding: 2,
+              borderStyle: 'solid',
+              borderWidth: 1,
+              borderColor: key === selectedKey ? theme.palette.primary.main : ' #ccc',
+              borderRadius: 1,
+              cursor: 'pointer'
+            })}
+            onClick={() => updateSelectedKey(key)}
+          >
+            <Typography>{s}</Typography>
+          </Box>
+        ))}
       <TextField multiline rows={4} value={condolence} onChange={(event) => setCondolence(event.target.value)} />
       <TextField placeholder="First and Last Name" onChange={(event) => setName(event.target.value)} />
       <Button disabled={!name} onClick={handleSaveCondolence} variant="contained">
