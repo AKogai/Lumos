@@ -12,10 +12,15 @@ import {
 } from '@mui/material';
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { relationshipOptions } from './relationship-options';
+import { useContentRequest } from '../../hooks/use-content-request';
 
 interface StepConf {
   label: string;
 }
+
+type ResType = {
+  relationship: string;
+};
 
 const steps: Array<StepConf> = [
   { label: 'What is your relation to the deceased person?' },
@@ -30,6 +35,9 @@ export const Stepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   // TODO: shape the res as needed for posting to backend - this is just a WIP
   const [res, setRes] = useState<any>(defaultValue);
+  const { mutate, data, isPending } = useContentRequest();
+
+  const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep]);
 
   const isCurrentStepValid = useMemo((): boolean => {
     switch (activeStep) {
@@ -45,10 +53,15 @@ export const Stepper = () => {
   }, [activeStep, res.relationship]);
 
   const handleNext = () => {
-    setIsNextClicked(true);
-    if (isCurrentStepValid) {
+    if (isLastStep) {
+      mutate({ caseId: '1', tone: 'tone', language: 'language', userInfo: 'userInfo' });
+    } else {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      setIsNextClicked(false);
+      setIsNextClicked(true);
+      if (isCurrentStepValid) {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setIsNextClicked(false);
+      }
     }
   };
 
@@ -62,7 +75,7 @@ export const Stepper = () => {
   };
 
   const updateRes = useCallback((value) => {
-    setRes((prev: any) => ({ ...prev, ...value }));
+    setRes((prev: ResType) => ({ ...prev, ...value }));
   }, []);
 
   const currentStepContent = useMemo((): JSX.Element => {
@@ -105,8 +118,8 @@ export const Stepper = () => {
                 <StepContent>
                   {currentStepContent}
                   <Box sx={{ mb: 2 }}>
-                    <Button variant="contained" onClick={handleNext} sx={{ mt: 1, mr: 1 }}>
-                      {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                    <Button variant="contained" onClick={handleNext} sx={{ mt: 1, mr: 1 }} loading={isPending}>
+                      {isPending ? 'Loading...' : isLastStep ? 'Finish' : 'Continue'}
                     </Button>
                     <Button disabled={index === 0} onClick={handleBack} sx={{ mt: 1, mr: 1 }}>
                       Back
