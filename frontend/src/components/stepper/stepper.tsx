@@ -139,6 +139,7 @@ export const Stepper = ({
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setProgress((prevProgress) => Math.max(prevProgress - 100 / steps.length, 0));
     if (error) {
       reset();
     }
@@ -147,6 +148,7 @@ export const Stepper = ({
   const handleReset = () => {
     setActiveStep(0);
     setRes(defaultValue);
+    setProgress(0);
     reset();
   };
 
