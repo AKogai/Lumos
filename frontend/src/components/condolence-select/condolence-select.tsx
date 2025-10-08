@@ -29,7 +29,12 @@ export const CondolenceSelect = ({
       {suggestions.map((s, index) => (
         <Box
           key={index}
-          sx={{ padding: 2, border: index === selectedIdx ? '1px solid blue' : '1px solid #ccc', borderRadius: 1 }}
+          sx={(theme) => ({
+            padding: 2,
+            border: '1px solid',
+            borderColor: index === selectedIdx ? theme.palette.primary.main : '#ccc',
+            borderRadius: 1
+          })}
           onClick={() => updateSelectedIdx(index)}
         >
           <Typography>{s}</Typography>
