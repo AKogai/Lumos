@@ -6,6 +6,7 @@ import { Button, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { getCases } from './api/funeral-cases';
 import { enqueueSnackbar } from 'notistack';
+import { MemorialCard } from './components/memorial-card/memorial-card';
 
 function App() {
   const [health, setHealth] = useState(null);
@@ -52,35 +53,7 @@ function App() {
             <h2 className="section-title">Remembering our loved ones</h2>
             <div className="profiles-grid">
               {memorials?.data?.map((p) => (
-                <div className="profile-card" key={p.id}>
-                  <img
-                    src={
-                      p.profileImageUrl ||
-                      `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        p.firstName + ' ' + p.lastName
-                      )}&background=random`
-                    }
-                    alt={`${p.firstName} ${p.lastName}`}
-                  />
-                  <div className="profile-content">
-                    <h3>
-                      {p.firstName} {p.middleName ? p.middleName + ' ' : ''}
-                      {p.lastName}
-                    </h3>
-                    <p className="lifespan">
-                      {p.bornDate} – {p.deathDate}
-                    </p>
-                    <p className="bio">
-                      {p.biography.length > 160 ? p.biography.substring(0, 160) + '...' : p.biography}
-                    </p>
-                    <p className="location">
-                      {p.placeOfBirth} → {p.placeOfDeath}
-                    </p>
-                    <button type="button" className="read-more" onClick={() => handleWriteCondolence(p)}>
-                      Write condolence →
-                    </button>
-                  </div>
-                </div>
+                <MemorialCard key={p.id} memorial={p} handleWriteCondolence={handleWriteCondolence} />
               ))}
             </div>
           </>
