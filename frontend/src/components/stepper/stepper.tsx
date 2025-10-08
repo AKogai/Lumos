@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  FormHelperText,
   MenuItem,
   Stepper as MuiStepper,
   Paper,
@@ -27,15 +28,10 @@ type ResType = {
   relationship: string;
   tone: string;
   context: string;
+  memory: string;
 };
 
-const steps: Array<StepConf> = [
-  { label: 'What is your relation to the deceased person?' },
-  { label: 'What tone do you want?' },
-  { label: 'Is there an important context in the message for you?' }
-];
-
-const defaultValue = { relationship: '', tone: '', context: '' };
+const defaultValue = { relationship: '', tone: '', context: '', memory: '' };
 
 export const Stepper = () => {
   const [isNextClicked, setIsNextClicked] = useState(false);
@@ -44,7 +40,26 @@ export const Stepper = () => {
   const [res, setRes] = useState<ResType>(defaultValue);
   const { mutateAsync, data, error, isPending } = useContentRequest();
 
-  const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep]);
+  const steps: Array<StepConf> = useMemo(() => {
+    const result = [
+      { label: 'What is your relation to the deceased person?' },
+      { label: 'What tone do you want?' },
+      { label: 'Is there an important context in the message for you?' }
+    ];
+
+    if (
+      !!res.relationship &&
+      !!res.tone &&
+      !['Co-Worker'].includes(res.relationship) &&
+      !['Very Formal'].includes(res.tone)
+    ) {
+      result.push({ label: 'Do you want to share a memory about the deceased?' });
+    }
+
+    return result;
+  }, [res.relationship, res.tone]);
+
+  const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep, steps.length]);
 
   const isCurrentStepValid = useMemo((): boolean => {
     switch (activeStep) {
@@ -100,25 +115,31 @@ export const Stepper = () => {
             defaultValue={res.relationship}
             onChange={(_, value) => updateRes({ relationship: value })}
             onInputChange={(_, newInputValue) => updateRes({ relationship: newInputValue })}
-            options={relationshipOptions}
+            options={!!res.relationship ? relationshipOptions : []}
             renderInput={(params) => <TextField {...params} {...commonProps} />}
           />
         );
       case 1:
         return (
-          <Select
-            fullWidth
-            value={res.tone}
-            onChange={(event: SelectChangeEvent<string>) => {
-              updateRes({ tone: event.target.value });
-              setIsNextClicked(false);
-            }}
-            {...commonProps}
-          >
-            {toneOptions.map((tone) => (
-              <MenuItem value={tone}>{tone}</MenuItem>
-            ))}
-          </Select>
+          <>
+            <Select
+              fullWidth
+              value={res.tone}
+              onChange={(event: SelectChangeEvent<string>) => {
+                updateRes({ tone: event.target.value });
+                setIsNextClicked(false);
+              }}
+              {...commonProps}
+            >
+              {toneOptions.map((tone) => (
+                <MenuItem value={tone.value}>{tone.value}</MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>
+              {res.tone && <b>{res.tone}: </b>}
+              {toneOptions.find((tone) => tone.value === res.tone)?.hint ?? 'Select an option to get a hint'}
+            </FormHelperText>
+          </>
         );
       case 2:
         return (
@@ -127,23 +148,33 @@ export const Stepper = () => {
             defaultValue={res.context}
             onChange={(_, value) => updateRes({ context: value })}
             onInputChange={(_, newInputValue) => updateRes({ context: newInputValue })}
-            options={contextOptions}
+            options={res.context ? contextOptions : []}
             renderInput={(params) => <TextField {...params} {...commonProps} />}
+          />
+        );
+      case 3:
+        return (
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            {...commonProps}
+            defaultValue={res.memory}
+            onChange={(e) => updateRes({ memory: e.target.value })}
           />
         );
       default:
         return <div>Unknown step</div>;
     }
-  }, [activeStep, commonProps, res.context, res.relationship, res.tone, updateRes]);
+  }, [activeStep, commonProps, res.context, res.memory, res.relationship, res.tone, updateRes]);
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper square elevation={0} sx={{ p: 3 }}>
         <MuiStepper activeStep={activeStep} orientation="vertical">
           {steps.map((step, index) => {
-            const stepProps: { completed?: boolean } = {};
             return (
-              <Step key={index} {...stepProps}>
+              <Step>
                 <StepLabel>{step.label}</StepLabel>
                 <StepContent>
                   {currentStepContent}
