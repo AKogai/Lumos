@@ -29,9 +29,10 @@ type ResType = {
   tone: string;
   context: string;
   memory: string;
+  knowsForHowLong: string;
 };
 
-const defaultValue = { relationship: '', tone: '', context: '', memory: '' };
+const defaultValue = { relationship: '', tone: '', context: '', memory: '', knowsForHowLong: '' };
 
 export const Stepper = () => {
   const [isNextClicked, setIsNextClicked] = useState(false);
@@ -53,6 +54,7 @@ export const Stepper = () => {
       !['Co-Worker'].includes(res.relationship) &&
       !['Very Formal'].includes(res.tone)
     ) {
+      result.push({ label: 'How long do you know him/her?' });
       result.push({ label: 'Do you want to share a memory about the deceased?' });
     }
 
@@ -68,6 +70,8 @@ export const Stepper = () => {
       case 1:
         return !!res.tone;
       case 2:
+      case 3:
+      case 4:
         return true;
       default:
         return false;
@@ -173,6 +177,15 @@ export const Stepper = () => {
         return (
           <TextField
             fullWidth
+            {...commonProps}
+            defaultValue={res.knowsForHowLong}
+            onChange={(e) => updateRes({ knowsForHowLong: e.target.value })}
+          />
+        );
+      case 4:
+        return (
+          <TextField
+            fullWidth
             multiline
             rows={4}
             {...commonProps}
@@ -183,7 +196,7 @@ export const Stepper = () => {
       default:
         return <div>Unknown step</div>;
     }
-  }, [activeStep, commonProps, res.context, res.memory, res.relationship, res.tone, updateRes]);
+  }, [activeStep, commonProps, res.context, res.knowsForHowLong, res.memory, res.relationship, res.tone, updateRes]);
 
   return (
     <Box sx={{ width: '100%' }}>
