@@ -10,7 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { JSX, useMemo, useState } from "react";
+import { JSX, useCallback, useMemo, useState } from "react";
 import { relationshipOptions } from "./relationship-options";
 
 interface StepConf {
@@ -25,11 +25,8 @@ const steps: Array<StepConf> = [
 
 export const Stepper = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [skipped, setSkipped] = useState(new Set<number>());
-
-  const isStepSkipped = (step: number) => {
-    return skipped.has(step);
-  };
+  // TODO: shape the res as needed for posting to backend - this is just a WIP
+  const [res, setRes] = useState<any>({ relationship: "" });
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -43,21 +40,26 @@ export const Stepper = () => {
     setActiveStep(0);
   };
 
+  const updateRelationshipValue = useCallback((value: string) => {
+    setRes((prev: any) => ({ ...prev, relationship: value }));
+  }, []);
+
   const currentStepContent = useMemo((): JSX.Element => {
     switch (activeStep) {
       case 0:
         return (
           <Autocomplete
             freeSolo
-            options={relationshipOptions.map((option) => ({
-              label: option,
-              value: option,
-            }))}
+            defaultValue={res.relationship}
+            onChange={(_, value) => updateRelationshipValue(value)}
+            onInputChange={(_, newInputValue) =>
+              updateRelationshipValue(newInputValue)
+            }
+            options={relationshipOptions}
             renderInput={(params) => (
               <TextField
                 {...params}
                 label="What is your relation to the deceased person?"
-                onChange={(e) => console.log(e.target.value)}
               />
             )}
           />
@@ -69,7 +71,7 @@ export const Stepper = () => {
       default:
         return <div>Unknown step</div>;
     }
-  }, [activeStep]);
+  }, [activeStep, res.relationship, updateRelationshipValue]);
 
   return (
     <Box sx={{ width: "100%" }}>
