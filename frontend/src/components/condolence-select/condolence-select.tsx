@@ -13,7 +13,6 @@ export const CondolenceSelect = ({
   const [selectedIdx, setSelectedIdx] = useState(0);
 
   const updateSelectedIdx = (index: number) => {
-    console.log('index? ', index);
     if (index !== selectedIdx) {
       setCondolence(suggestions[index]);
     }
