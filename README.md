@@ -1,6 +1,10 @@
-# Full Stack Application
+# Lumos - Memorial Page Writing Assistant
 
-A basic full-stack application with React frontend, Spring Boot backend, and PostgreSQL database.
+An empathetic AI assistant to help friends and family find the right words when creating obituaries and condolence messages for memorial pages.
+
+## About
+
+Lumos helps people express their grief and give comfort to others during difficult times. The application guides users through a series of thoughtful questions to generate meaningful, personalized content for memorial pages - whether writing an obituary or a condolence message. The AI-generated text serves as a compassionate starting point that users can then edit, extend, and refine to truly capture their feelings and memories.
 
 ## Tech Stack
 
