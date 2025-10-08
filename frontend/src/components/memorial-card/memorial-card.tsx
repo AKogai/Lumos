@@ -36,7 +36,7 @@ export const MemorialCard = ({
             height: '220px',
             objectFit: 'cover'
           }}
-          src={memorial.profileImageUrl || `/person${Number(selectedMemorialId ?? memorial.id) % 6}.jpeg`}
+          src={memorial.profileImageUrl || `/person${Number(selectedMemorialId ?? memorial.id) % 12}.jpeg`}
           alt={`${memorial.firstName} ${memorial.lastName}`}
         />
         <Box
