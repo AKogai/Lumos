@@ -13,7 +13,7 @@ export const MemorialCard = ({
   selectedMemorialId?: string;
 }) => {
   return (
-    <Box sx={(theme) => ({ display: 'flex', flexDirection: 'column', gap: theme.spacing(2) })}>
+    <Box sx={(theme) => ({ display: 'flex', flexDirection: 'column', gap: theme.spacing(2), height: '100%' })}>
       <Box
         key={memorial.id}
         sx={(theme) => ({
@@ -22,6 +22,7 @@ export const MemorialCard = ({
           boxShadow: theme.shadows[3],
           overflow: 'hidden',
           display: 'flex',
+          height: '100%',
           flexDirection: 'column',
           transition: 'transform 0.2s ease',
           '&:hover': {
