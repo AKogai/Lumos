@@ -21,7 +21,6 @@ import { useContentRequest } from '../../hooks/use-content-request';
 import { religionOptions } from './religion-options';
 import { LinearProgress } from '../linear-progress/linear-progress';
 import { MemorialCaseResponse } from '../../api/funeral-cases';
-import { useQueryClient } from '@tanstack/react-query';
 
 interface StepConf {
   label: string;
@@ -38,8 +37,13 @@ type ResType = {
 
 const defaultValue = { relationship: '', tone: '', religion: '', memory: '', knowsForHowLong: '' };
 
-export const Stepper = ({ memorial, onFinish }: { memorial: MemorialCaseResponse; onFinish: () => void }) => {
-  const queryClient = useQueryClient();
+export const Stepper = ({
+  memorial,
+  onFinish
+}: {
+  memorial: MemorialCaseResponse;
+  onFinish: (suggestions: Array<string>) => void;
+}) => {
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -97,40 +101,32 @@ export const Stepper = ({ memorial, onFinish }: { memorial: MemorialCaseResponse
     [isCurrentStepValid, isNextClicked]
   );
 
-  const fakeUpdateApiData = () => {
-    queryClient.setQueryData(['memorial-cases'], (old: Array<MemorialCaseResponse>) => {
-      const updated = old.map((item) =>
-        item.id === memorial.id
-          ? {
-              ...item,
-              condolences: [...item.condolences, { message: [res.tone, res.relationship, res.memory].join(' - ') }]
-            }
-          : item
-      );
+  // const fakeUpdateApiData = () => {
+  //   queryClient.setQueryData(['memorial-cases'], (old: Array<MemorialCaseResponse>) => {
+  //     const updated = old.map((item) =>
+  //       item.id === memorial.id
+  //         ? {
+  //             ...item,
+  //             condolences: [...item.condolences, { message: [res.tone, res.relationship, res.memory].join(' - ') }]
+  //           }
+  //         : item
+  //     );
 
-      return updated;
-    });
-    onFinish();
-  };
+  //     return updated;
+  //   });
+  // };
 
   const handleNext = async () => {
     try {
       setIsNextClicked(true);
       if (isLastStep) {
-        const result = await mutateAsync(
-          {
-            caseId: memorial.id.toString(),
-            tone: res.tone,
-            religion: res.religion,
-            userInfo: `User has ${res.relationship} to deceased. ${res.memory ? `User shares this memory with the deceased: ${res.memory}` : ''} ${res.knowsForHowLong ? `User knows deceased for this long: ${res.knowsForHowLong}.` : ''}`
-          },
-          {
-            onError: () => {
-              // TODO-ET: fake handling since BE currently fails. has to land in onSuccess(), when BE fixed
-              fakeUpdateApiData();
-            }
-          }
-        ).catch(() => {
+        const result = await mutateAsync({
+          caseId: memorial.id.toString(),
+          tone: res.tone,
+          religion: res.religion,
+          userInfo: `User has ${res.relationship} to deceased. ${res.memory ? `User shares this memory with the deceased: ${res.memory}` : ''} ${res.knowsForHowLong ? `User knows deceased for this long: ${res.knowsForHowLong}.` : ''}`
+        }).catch(() => {
+          onFinish(['string#1', 'string#2']);
           // Error is already handled by React Query and available in `error` prop
           return null;
         });

@@ -8,12 +8,14 @@ import { getCases } from './api/funeral-cases';
 import { enqueueSnackbar } from 'notistack';
 import { MemorialCard } from './components/memorial-card/memorial-card';
 import { MemorialDetails } from './components/memorial-details/memorial-details';
+import { CondolenceSelect } from './components/condolence-select/condolence-select';
 
 function App() {
   const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedProfileId, setSelectedProfileId] = useState(null);
   const [isWritingCondolence, setIsWritingCondolence] = useState(false);
+  const [condolencesForSelect, setCondolencesForSelect] = useState<Array<string>>([]);
 
   useEffect(() => {
     const apiUrl = `${process.env.REACT_APP_API_URL}/api/health`;
@@ -42,6 +44,7 @@ function App() {
   const handleBackToList = () => {
     setSelectedProfileId(null);
     setIsWritingCondolence(false);
+    setCondolencesForSelect([]);
   };
 
   const selectedProfile = useMemo(
@@ -98,9 +101,13 @@ function App() {
             </Button>
             {isWritingCondolence ? (
               <>
-                <ErrorBoundary fallback={<Typography>Something went wrong in the Stepper component.</Typography>}>
-                  <Stepper memorial={selectedProfile} onFinish={() => setIsWritingCondolence(false)} />
-                </ErrorBoundary>
+                {!condolencesForSelect.length ? (
+                  <ErrorBoundary fallback={<Typography>Something went wrong in the Stepper component.</Typography>}>
+                    <Stepper memorial={selectedProfile} onFinish={setCondolencesForSelect} />
+                  </ErrorBoundary>
+                ) : (
+                  <CondolenceSelect suggestions={condolencesForSelect} />
+                )}
               </>
             ) : (
               <>
