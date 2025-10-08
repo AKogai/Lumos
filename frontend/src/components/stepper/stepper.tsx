@@ -17,6 +17,7 @@ import { JSX, useCallback, useMemo, useState } from 'react';
 import { relationshipOptions } from './relationship-options';
 import { toneOptions } from './tone-options';
 import { useContentRequest } from '../../hooks/use-content-request';
+import { contextOptions } from './context-options';
 
 interface StepConf {
   label: string;
@@ -24,6 +25,8 @@ interface StepConf {
 
 type ResType = {
   relationship: string;
+  tone: string;
+  context: string;
 };
 
 const steps: Array<StepConf> = [
@@ -32,13 +35,13 @@ const steps: Array<StepConf> = [
   { label: 'Is there an important context in the message for you?' }
 ];
 
-const defaultValue = { relationship: '', tone: '' };
+const defaultValue = { relationship: '', tone: '', context: '' };
 
 export const Stepper = () => {
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   // TODO: shape the res as needed for posting to backend - this is just a WIP
-  const [res, setRes] = useState<typeof defaultValue>(defaultValue);
+  const [res, setRes] = useState<ResType>(defaultValue);
   const { mutateAsync, data, error, isPending } = useContentRequest();
 
   const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep]);
@@ -118,11 +121,20 @@ export const Stepper = () => {
           </Select>
         );
       case 2:
-        return <div>Step 3 content</div>;
+        return (
+          <Autocomplete
+            freeSolo
+            defaultValue={res.context}
+            onChange={(_, value) => updateRes({ context: value })}
+            onInputChange={(_, newInputValue) => updateRes({ context: newInputValue })}
+            options={contextOptions}
+            renderInput={(params) => <TextField {...params} {...commonProps} />}
+          />
+        );
       default:
         return <div>Unknown step</div>;
     }
-  }, [activeStep, commonProps, res.relationship, res.tone, updateRes]);
+  }, [activeStep, commonProps, res.context, res.relationship, res.tone, updateRes]);
 
   return (
     <Box sx={{ width: '100%' }}>
