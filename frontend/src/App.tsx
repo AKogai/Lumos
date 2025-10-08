@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import "./App.css";
-import { Stepper } from "./components/stepper/stepper";
+import { useState, useEffect } from 'react';
+import './App.css';
+import { Stepper } from './components/stepper/stepper';
 
 function App() {
   const [health, setHealth] = useState(null);
