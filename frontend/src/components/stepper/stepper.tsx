@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   Stepper as MuiStepper,
@@ -6,18 +7,19 @@ import {
   Step,
   StepContent,
   StepLabel,
+  TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { JSX, useMemo, useState } from "react";
+import { relationshipOptions } from "./relationship-options";
 
 interface StepConf {
   label: string;
-  optional?: boolean;
 }
 
 const steps: Array<StepConf> = [
   { label: "first" },
-  { label: "second", optional: true },
+  { label: "second" },
   { label: "third" },
 ];
 
@@ -41,27 +43,45 @@ export const Stepper = () => {
     setActiveStep(0);
   };
 
+  const currentStepContent = useMemo((): JSX.Element => {
+    switch (activeStep) {
+      case 0:
+        return (
+          <Autocomplete
+            freeSolo
+            options={relationshipOptions.map((option) => ({
+              label: option,
+              value: option,
+            }))}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="What is your relation to the deceased person?"
+                onChange={(e) => console.log(e.target.value)}
+              />
+            )}
+          />
+        );
+      case 1:
+        return <div>Step 2 content</div>;
+      case 2:
+        return <div>Step 3 content</div>;
+      default:
+        return <div>Unknown step</div>;
+    }
+  }, [activeStep]);
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper square elevation={0} sx={{ p: 3 }}>
         <MuiStepper activeStep={activeStep} orientation="vertical">
           {steps.map((step, index) => {
             const stepProps: { completed?: boolean } = {};
-            const labelProps: {
-              optional?: React.ReactNode;
-            } = {};
-            if (step.optional) {
-              labelProps.optional = (
-                <Typography variant="caption">Optional</Typography>
-              );
-            }
-            if (isStepSkipped(index)) {
-              stepProps.completed = false;
-            }
             return (
               <Step key={index} {...stepProps}>
-                <StepLabel {...labelProps}>{step.label}</StepLabel>
+                <StepLabel>{step.label}</StepLabel>
                 <StepContent>
+                  {currentStepContent}
                   <Box sx={{ mb: 2 }}>
                     <Button
                       variant="contained"
