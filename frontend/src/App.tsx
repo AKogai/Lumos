@@ -82,6 +82,7 @@ function App() {
                 gap: theme.spacing(3)
               })}
             >
+              {memorials.map((p) => (
                 <MemorialCard key={p.id} memorial={p} openMemorialDetails={setSelectedProfile} />
               ))}
             </Box>
