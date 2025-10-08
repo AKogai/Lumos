@@ -2,8 +2,12 @@ import {
   Autocomplete,
   Box,
   Button,
+  FormHelperText,
+  MenuItem,
   Stepper as MuiStepper,
   Paper,
+  Select,
+  SelectChangeEvent,
   Step,
   StepContent,
   StepLabel,
@@ -12,7 +16,9 @@ import {
 } from '@mui/material';
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { relationshipOptions } from './relationship-options';
+import { toneOptions } from './tone-options';
 import { useContentRequest } from '../../hooks/use-content-request';
+import { contextOptions } from './context-options';
 
 interface StepConf {
   label: string;
@@ -20,56 +26,101 @@ interface StepConf {
 
 type ResType = {
   relationship: string;
+  tone: string;
+  context: string;
+  memory: string;
+  knowsForHowLong: string;
 };
 
-const steps: Array<StepConf> = [
-  { label: 'What is your relation to the deceased person?' },
-  { label: 'second' },
-  { label: 'third' }
-];
-
-const defaultValue = { relationship: '' };
+const defaultValue = { relationship: '', tone: '', context: '', memory: '', knowsForHowLong: '' };
 
 export const Stepper = () => {
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   // TODO: shape the res as needed for posting to backend - this is just a WIP
-  const [res, setRes] = useState<any>(defaultValue);
-  const { mutateAsync, data, error, isPending } = useContentRequest();
+  const [res, setRes] = useState<ResType>(defaultValue);
+  const { mutateAsync, data, error, isPending, reset } = useContentRequest();
 
-  const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep]);
+  const steps: Array<StepConf> = useMemo(() => {
+    const result = [
+      { label: 'What is your relation to the deceased person?' },
+      { label: 'What tone do you want?' },
+      { label: 'Is there an important context in the message for you?' }
+    ];
+
+    if (
+      !!res.relationship &&
+      !!res.tone &&
+      !['Co-Worker'].includes(res.relationship) &&
+      !['Very Formal'].includes(res.tone)
+    ) {
+      result.push({ label: 'How long do you know him/her?' });
+      result.push({ label: 'Do you want to share a memory about the deceased?' });
+    }
+
+    return result;
+  }, [res.relationship, res.tone]);
+
+  const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep, steps.length]);
 
   const isCurrentStepValid = useMemo((): boolean => {
     switch (activeStep) {
       case 0:
         return res.relationship && res.relationship.length > 0;
       case 1:
-        return true;
+        return !!res.tone;
       case 2:
+      case 3:
+      case 4:
         return true;
       default:
         return false;
     }
-  }, [activeStep, res.relationship]);
+  }, [activeStep, res.relationship, res.tone]);
+
+  const commonProps = useMemo(
+    () => ({
+      error: isNextClicked && !isCurrentStepValid,
+      onFocus: () => setIsNextClicked(false)
+    }),
+    [isCurrentStepValid, isNextClicked]
+  );
 
   const handleNext = async () => {
-    setIsNextClicked(true);
-    if (isLastStep) {
-      await mutateAsync({ caseId: '1', tone: 'tone', language: 'language', userInfo: 'userInfo' });
-    }
-    if (isCurrentStepValid) {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      setIsNextClicked(false);
+    try {
+      setIsNextClicked(true);
+      if (isLastStep) {
+        const result = await mutateAsync({
+          caseId: '1',
+          tone: res.tone,
+          language: 'language',
+          userInfo: res.relationship
+        }).catch(() => {
+          // Error is already handled by React Query and available in `error` prop
+          return null;
+        });
+        if (!result) return;
+      }
+      if (isCurrentStepValid) {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setIsNextClicked(false);
+      }
+    } catch (e) {
+      console.error('error? ', e);
     }
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    if (error) {
+      reset();
+    }
   };
 
   const handleReset = () => {
     setActiveStep(0);
     setRes(defaultValue);
+    reset();
   };
 
   const updateRes = useCallback((value) => {
@@ -85,33 +136,75 @@ export const Stepper = () => {
             defaultValue={res.relationship}
             onChange={(_, value) => updateRes({ relationship: value })}
             onInputChange={(_, newInputValue) => updateRes({ relationship: newInputValue })}
-            options={relationshipOptions}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                error={isNextClicked && !isCurrentStepValid}
-                onFocus={() => setIsNextClicked(false)}
-              />
-            )}
+            options={!!res.relationship ? relationshipOptions : []}
+            renderInput={(params) => <TextField {...params} {...commonProps} />}
           />
         );
       case 1:
-        return <div>Step 2 content</div>;
+        return (
+          <>
+            <Select
+              fullWidth
+              value={res.tone}
+              onChange={(event: SelectChangeEvent<string>) => {
+                updateRes({ tone: event.target.value });
+                setIsNextClicked(false);
+              }}
+              {...commonProps}
+            >
+              {toneOptions.map((tone) => (
+                <MenuItem value={tone.value}>{tone.value}</MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>
+              {res.tone && <b>{res.tone}: </b>}
+              {toneOptions.find((tone) => tone.value === res.tone)?.hint ?? 'Select an option to get a hint'}
+            </FormHelperText>
+          </>
+        );
       case 2:
-        return <div>Step 3 content</div>;
+        return (
+          <Autocomplete
+            freeSolo
+            defaultValue={res.context}
+            onChange={(_, value) => updateRes({ context: value })}
+            onInputChange={(_, newInputValue) => updateRes({ context: newInputValue })}
+            options={res.context ? contextOptions : []}
+            renderInput={(params) => <TextField {...params} {...commonProps} />}
+          />
+        );
+      case 3:
+        return (
+          <TextField
+            fullWidth
+            {...commonProps}
+            defaultValue={res.knowsForHowLong}
+            onChange={(e) => updateRes({ knowsForHowLong: e.target.value })}
+          />
+        );
+      case 4:
+        return (
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            {...commonProps}
+            defaultValue={res.memory}
+            onChange={(e) => updateRes({ memory: e.target.value })}
+          />
+        );
       default:
         return <div>Unknown step</div>;
     }
-  }, [activeStep, isCurrentStepValid, isNextClicked, res.relationship, updateRes]);
+  }, [activeStep, commonProps, res.context, res.knowsForHowLong, res.memory, res.relationship, res.tone, updateRes]);
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper square elevation={0} sx={{ p: 3 }}>
         <MuiStepper activeStep={activeStep} orientation="vertical">
           {steps.map((step, index) => {
-            const stepProps: { completed?: boolean } = {};
             return (
-              <Step key={index} {...stepProps}>
+              <Step>
                 <StepLabel>{step.label}</StepLabel>
                 <StepContent>
                   {currentStepContent}
@@ -128,18 +221,11 @@ export const Stepper = () => {
             );
           })}
         </MuiStepper>
+        {error && <Typography color="error">Error: {error.message}</Typography>}
       </Paper>
       {activeStep === steps.length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography>
-            {data
-              ? `Content Suggestion: ${data.openaiResponse}`
-              : isPending
-                ? 'Loading...'
-                : error
-                  ? `Error: ${error.message}`
-                  : 'Pending...'}
-          </Typography>
+          {data && <Typography>Content suggestion: {data.openaiResponse}</Typography>}
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             Reset
           </Button>
