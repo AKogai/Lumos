@@ -40,10 +40,18 @@ export const CondolenceSelect = ({
           })}
           onClick={() => updateSelectedIdx(index)}
         >
-          <Typography>{s}</Typography>
+          <Typography>
+            Option#{index + 1}: {s}
+          </Typography>
         </Box>
       ))}
-      <TextField multiline rows={4} value={condolence} onChange={(event) => setCondolence(event.target.value)} />
+      <TextField
+        multiline
+        rows={4}
+        value={condolence}
+        onChange={(event) => setCondolence(event.target.value)}
+        label="Your Condolence"
+      />
       <TextField placeholder="First and Last Name" onChange={(event) => setName(event.target.value)} />
       <Button disabled={!name} onClick={handleSaveCondolence} variant="contained">
         Post Condolence
