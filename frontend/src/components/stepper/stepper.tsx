@@ -152,7 +152,9 @@ export const Stepper = () => {
               {...commonProps}
             >
               {toneOptions.map((tone) => (
-                <MenuItem value={tone.value}>{tone.value}</MenuItem>
+                <MenuItem key={`${tone.value}-${tone.hint}`} value={tone.value}>
+                  {tone.value}
+                </MenuItem>
               ))}
             </Select>
             <FormHelperText>
@@ -203,7 +205,7 @@ export const Stepper = () => {
         <MuiStepper activeStep={activeStep} orientation="vertical">
           {steps.map((step, index) => {
             return (
-              <Step>
+              <Step key={`${step.label}-${index}`}>
                 <StepLabel>{step.label}</StepLabel>
                 <StepContent>
                   {currentStepContent}
@@ -220,11 +222,10 @@ export const Stepper = () => {
             );
           })}
         </MuiStepper>
-        {error && <Typography color="error">Error: {error.message}</Typography>}
       </Paper>
       {activeStep === steps.length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
-          {data && <Typography>Content suggestion: {data.openaiResponse}</Typography>}
+          {data && <Typography>Content suggestion: {data.data.openaiResponse}</Typography>}
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             Reset
           </Button>
