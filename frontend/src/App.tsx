@@ -84,6 +84,7 @@ function App() {
       >
         <img
           src={'/hero.jpg'}
+          alt=""
           style={{
             position: 'absolute',
             top: 0,
