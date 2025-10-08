@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { MemorialCaseResponse } from '../../api/funeral-cases';
 
 export const MemorialCard = ({

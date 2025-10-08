@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material';
 import { MemorialCard } from '../memorial-card/memorial-card';
 
-export const MemorialDetails = ({ selectedProfile, handleBackToList, handleWriteCondolence }) => {
+export const MemorialDetails = ({ selectedProfile, handleWriteCondolence }) => {
   return (
     <Stack spacing={2} direction="column">
       <MemorialCard

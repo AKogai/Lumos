@@ -16,6 +16,7 @@ function App() {
   const [selectedProfileId, setSelectedProfileId] = useState(null);
   const [isWritingCondolence, setIsWritingCondolence] = useState(false);
   const [condolencesForSelect, setCondolencesForSelect] = useState<Array<string>>([]);
+  const [shouldShowStepper, setShouldShowStepper] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -46,6 +47,7 @@ function App() {
     setSelectedProfileId(null);
     setIsWritingCondolence(false);
     setCondolencesForSelect([]);
+    setShouldShowStepper(false);
   };
 
   const selectedProfile = useMemo(
@@ -69,6 +71,7 @@ function App() {
 
     setIsWritingCondolence(false);
     setCondolencesForSelect([]);
+    setShouldShowStepper(false);
   };
 
   return (
@@ -97,12 +100,12 @@ function App() {
         />
         <Link
           href="/"
-          sx={(theme) => ({
+          sx={{
             position: 'relative',
             textDecoration: 'none',
             color: 'black',
             zIndex: 1
-          })}
+          }}
         >
           <Typography sx={{ textDecoration: 'unset' }} variant="h1">
             Memorial Page Content Assistant
@@ -142,21 +145,34 @@ function App() {
             </Button>
             {isWritingCondolence ? (
               <>
-                {!condolencesForSelect.length ? (
-                  <ErrorBoundary fallback={<Typography>Something went wrong in the Stepper component.</Typography>}>
-                    <Stepper memorial={selectedProfile} onFinish={setCondolencesForSelect} />
-                  </ErrorBoundary>
+                {shouldShowStepper ? (
+                  <>
+                    {!condolencesForSelect.length ? (
+                      <ErrorBoundary fallback={<Typography>Something went wrong in the Stepper component.</Typography>}>
+                        <Stepper memorial={selectedProfile} onFinish={setCondolencesForSelect} />
+                      </ErrorBoundary>
+                    ) : (
+                      <CondolenceSelect suggestions={condolencesForSelect} onAfterSave={fakeUpdateApiData} />
+                    )}
+                  </>
                 ) : (
-                  <CondolenceSelect suggestions={condolencesForSelect} onAfterSave={fakeUpdateApiData} />
+                  <>
+                    <Box>
+                      <Button
+                        variant="contained"
+                        onClick={() => setShouldShowStepper(true)}
+                        sx={{ mb: 2, width: '100%' }}
+                      >
+                        Start AI Condolence Support
+                      </Button>
+                    </Box>
+                    <CondolenceSelect suggestions={[]} onAfterSave={fakeUpdateApiData} />
+                  </>
                 )}
               </>
             ) : (
               <>
-                <MemorialDetails
-                  selectedProfile={selectedProfile}
-                  handleBackToList={handleBackToList}
-                  handleWriteCondolence={handleWriteCondolence}
-                />
+                <MemorialDetails selectedProfile={selectedProfile} handleWriteCondolence={handleWriteCondolence} />
               </>
             )}
           </Box>

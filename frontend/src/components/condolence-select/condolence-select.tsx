@@ -1,5 +1,5 @@
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 export const CondolenceSelect = ({
   suggestions,
