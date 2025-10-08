@@ -31,7 +31,8 @@ export const CondolenceSelect = ({
           key={index}
           sx={(theme) => ({
             padding: 2,
-            border: '1px solid',
+            borderStyle: 'solid',
+            borderWidth: 1,
             borderColor: index === selectedIdx ? theme.palette.primary.main : '#ccc',
             borderRadius: 1
           })}
