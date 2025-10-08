@@ -1,6 +1,10 @@
 import { AxiosResponse } from './../../node_modules/axios/index.d';
 import { api } from './config';
 
+export interface Condolence {
+  message: string;
+}
+
 export interface MemorialCaseResponse {
   id: number;
   firstName: string;
@@ -15,6 +19,7 @@ export interface MemorialCaseResponse {
   placeOfDeath: string;
   createdAt: string;
   updatedAt: string;
+  condolences: Condolence[];
 }
 
 export async function getCases(): Promise<AxiosResponse<Array<MemorialCaseResponse>>> {

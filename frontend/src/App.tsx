@@ -32,7 +32,8 @@ function App() {
   const { data: memorials } = useQuery({
     queryFn: getCases,
     queryKey: ['memorial-cases'],
-    enabled: !!health && !loading
+    enabled: !!health && !loading,
+    select: (res) => res.data.map((item) => ({ ...item, condolences: [] }))
   });
 
   const handleWriteCondolence = () => {
@@ -55,7 +56,7 @@ function App() {
           <>
             <h2 className="section-title">Remembering our loved ones</h2>
             <div className="profiles-grid">
-              {memorials?.data?.map((p) => (
+              {memorials?.map((p) => (
                 <MemorialCard key={p.id} memorial={p} openMemorialDetails={setSelectedProfile} />
               ))}
             </div>

@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Box, Button, Divider, Typography } from '@mui/material';
 import { MemorialCaseResponse } from '../../api/funeral-cases';
 
 export const MemorialCard = ({
@@ -44,6 +44,17 @@ export const MemorialCard = ({
           {selectedMemorialId ? 'Write condolence →' : 'View details'}
         </Button>
       </div>
+      {selectedMemorialId && memorial.condolences.length > 0 && (
+        <>
+          <Divider />
+          <Box>
+            {memorial.condolences.map((cd, idx) => (
+              <Typography key={idx}>"{cd.message}"</Typography>
+            ))}
+          </Box>
+        </>
+      )}
+      <Divider />
     </div>
   );
 };
