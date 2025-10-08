@@ -73,9 +73,9 @@ export const Stepper = () => {
       if (isLastStep) {
         const result = await mutateAsync({
           caseId: '1',
-          tone: 'tone',
+          tone: res.tone,
           language: 'language',
-          userInfo: 'userInfo'
+          userInfo: res.relationship
         }).catch(() => {
           // Error is already handled by React Query and available in `error` prop
           return null;
