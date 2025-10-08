@@ -130,7 +130,7 @@ export const Stepper = ({
       }
       if (isCurrentStepValid) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setProgress((prevProgress) => prevProgress + 100 / steps.length);
+        setProgress((prevProgress) => Math.min(prevProgress + 100 / steps.length, 100));
         setIsNextClicked(false);
       }
     } catch (e) {
@@ -140,11 +140,13 @@ export const Stepper = ({
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setProgress((prevProgress) => Math.max(prevProgress - 100 / steps.length, 0));
     if (error) {
       reset();
     }
   };
 
+    setProgress(0);
   const updateRes = useCallback((value) => {
     setRes((prev: ResType) => ({ ...prev, ...value }));
   }, []);
