@@ -17,17 +17,39 @@ interface StepConf {
   label: string;
 }
 
-const steps: Array<StepConf> = [{ label: 'first' }, { label: 'second' }, { label: 'third' }];
+const steps: Array<StepConf> = [
+  { label: 'What is your relation to the deceased person?' },
+  { label: 'second' },
+  { label: 'third' }
+];
 
-const defaultValue = { relationship: "" };
+const defaultValue = { relationship: '' };
 
 export const Stepper = () => {
+  const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   // TODO: shape the res as needed for posting to backend - this is just a WIP
   const [res, setRes] = useState<any>(defaultValue);
 
+  const isCurrentStepValid = useMemo((): boolean => {
+    switch (activeStep) {
+      case 0:
+        return res.relationship && res.relationship.length > 0;
+      case 1:
+        return true;
+      case 2:
+        return true;
+      default:
+        return false;
+    }
+  }, [activeStep, res.relationship]);
+
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setIsNextClicked(true);
+    if (isCurrentStepValid) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      setIsNextClicked(false);
+    }
   };
 
   const handleBack = () => {
@@ -39,8 +61,8 @@ export const Stepper = () => {
     setRes(defaultValue);
   };
 
-  const updateRelationshipValue = useCallback((value: string) => {
-    setRes((prev: any) => ({ ...prev, relationship: value }));
+  const updateRes = useCallback((value) => {
+    setRes((prev: any) => ({ ...prev, ...value }));
   }, []);
 
   const currentStepContent = useMemo((): JSX.Element => {
@@ -50,15 +72,14 @@ export const Stepper = () => {
           <Autocomplete
             freeSolo
             defaultValue={res.relationship}
-            onChange={(_, value) => updateRelationshipValue(value)}
-            onInputChange={(_, newInputValue) =>
-              updateRelationshipValue(newInputValue)
-            }
+            onChange={(_, value) => updateRes({ relationship: value })}
+            onInputChange={(_, newInputValue) => updateRes({ relationship: newInputValue })}
             options={relationshipOptions}
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="What is your relation to the deceased person?"
+                error={isNextClicked && !isCurrentStepValid}
+                onFocus={() => setIsNextClicked(false)}
               />
             )}
           />
@@ -70,7 +91,7 @@ export const Stepper = () => {
       default:
         return <div>Unknown step</div>;
     }
-  }, [activeStep, res.relationship, updateRelationshipValue]);
+  }, [activeStep, isCurrentStepValid, isNextClicked, res.relationship, updateRes]);
 
   return (
     <Box sx={{ width: '100%' }}>
