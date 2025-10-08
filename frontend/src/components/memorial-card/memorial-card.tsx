@@ -76,7 +76,9 @@ export const MemorialCard = ({
           <Divider />
           <Box>
             {memorial.condolences.map((cd, idx) => (
-              <Typography key={idx}>"{cd.message}"</Typography>
+              <Box sx={{ p: 2 }}>
+                <Typography key={idx}>{cd.message}</Typography>
+              </Box>
             ))}
           </Box>
         </>
