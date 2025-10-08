@@ -1,12 +1,13 @@
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
+import { ParsedMessages } from '../stepper/response-parser.helper';
 
 export const CondolenceSelect = ({
   suggestions,
   onAfterSave
 }: {
-  suggestions: Array<string>;
+  suggestions: ParsedMessages;
   onAfterSave: (selectedCondolence: string, name: string) => void;
 }) => {
   const [name, setName] = useState('');
@@ -27,7 +28,7 @@ export const CondolenceSelect = ({
 
   return (
     <Stack spacing={2} direction="column">
-      {suggestions.map((s, index) => (
+      {Object.values(suggestions)?.map((s, index) => (
         <Box
           key={index}
           sx={(theme) => ({

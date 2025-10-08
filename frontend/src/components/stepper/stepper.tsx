@@ -21,6 +21,7 @@ import { useContentRequest } from '../../hooks/use-content-request';
 import { religionOptions } from './religion-options';
 import { LinearProgress } from '../linear-progress/linear-progress';
 import { MemorialCaseResponse } from '../../api/funeral-cases';
+import { ParsedMessages, parseOpenAIResponse } from './response-parser.helper';
 
 interface StepConf {
   label: string;
@@ -42,13 +43,13 @@ export const Stepper = ({
   onFinish
 }: {
   memorial: MemorialCaseResponse;
-  onFinish: (suggestions: Array<string>) => void;
+  onFinish: (suggestions: ParsedMessages) => void;
 }) => {
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [res, setRes] = useState<ResType>(defaultValue);
-  const { mutateAsync, data, error, isPending, reset } = useContentRequest();
+  const { mutateAsync, error, isPending, reset } = useContentRequest();
 
   const steps: Array<StepConf> = useMemo(() => {
     const result = [
@@ -114,11 +115,11 @@ export const Stepper = ({
           },
           {
             onSuccess: (data) => {
-              console.log('TODO: call onFinish with data (and remove onFinish from .catch() ) => ', data);
+              const parsedData = parseOpenAIResponse(data.data.openaiResponse);
+              onFinish(parsedData);
             }
           }
         ).catch(() => {
-          onFinish(['string#1', 'string#2']);
           // Error is already handled by React Query and available in `error` prop
           return null;
         });
@@ -142,12 +143,6 @@ export const Stepper = ({
     if (error) {
       reset();
     }
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-    setRes(defaultValue);
-    reset();
   };
 
   const updateRes = useCallback((value) => {
@@ -270,14 +265,6 @@ export const Stepper = ({
           })}
         </MuiStepper>
       </Paper>
-      {activeStep === steps.length && (
-        <Paper square elevation={0} sx={{ p: 3 }}>
-          {data && <Typography>Content suggestion: {data.data.openaiResponse}</Typography>}
-          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-            <Typography fontWeight="500">Reset</Typography>
-          </Button>
-        </Paper>
-      )}
     </Box>
   );
 };
