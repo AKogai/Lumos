@@ -1,16 +1,12 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.OpenAIPromptResponse;
-import com.example.backend.dto.OpenAIRequest;
-import com.example.backend.dto.OpenAIResponse;
 import com.example.backend.entity.Memorial;
 import com.example.backend.repository.MemorialRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,24 +15,19 @@ import java.util.Map;
 @Service
 public class MemorialService {
 
+    private static final Logger logger = LoggerFactory.getLogger(MemorialService.class);
+
     private final MemorialRepository memorialRepository;
-    private final RestTemplate restTemplate;
-
-    @Value("${openai.api.key}")
-    private String openAiApiKey;
-
-    @Value("${openai.api.url}")
-    private String openAiApiUrl;
-
-    @Value("${openai.model}")
-    private String openAiModel;
+    private final OpenAIProvider openAIProvider;
+    private final ClaudeProvider claudeProvider;
 
     @Value("${openai.prompt.template}")
     private String promptTemplate;
 
-    public MemorialService(MemorialRepository memorialRepository) {
+    public MemorialService(MemorialRepository memorialRepository, OpenAIProvider openAIProvider, ClaudeProvider claudeProvider) {
         this.memorialRepository = memorialRepository;
-        this.restTemplate = new RestTemplate();
+        this.openAIProvider = openAIProvider;
+        this.claudeProvider = claudeProvider;
     }
 
     public List<Memorial> findAll() {
@@ -66,31 +57,31 @@ public class MemorialService {
         // Replace placeholders in template
         String finalPrompt = replacePlaceholders(promptTemplate, variables);
 
-        // Call OpenAI API
-        OpenAIRequest request = new OpenAIRequest(
-                openAiModel,
-                List.of(new OpenAIRequest.Message("user", finalPrompt)),
-                0.7
-        );
+        // Try OpenAI first, fallback to Claude if it fails
+        String aiResponse;
+        String providerUsed;
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(openAiApiKey);
-
-        HttpEntity<OpenAIRequest> entity = new HttpEntity<>(request, headers);
-
-        OpenAIResponse response = restTemplate.postForObject(
-                openAiApiUrl,
-                entity,
-                OpenAIResponse.class
-        );
-
-        String openaiResponse = "No response from OpenAI";
-        if (response != null && response.getChoices() != null && !response.getChoices().isEmpty()) {
-            openaiResponse = response.getChoices().get(0).getMessage().getContent();
+        try {
+            logger.info("Attempting to use OpenAI provider");
+            aiResponse = openAIProvider.generateResponse(finalPrompt);
+            providerUsed = "OpenAI";
+            logger.info("Successfully received response from OpenAI");
+        } catch (Exception e) {
+            logger.warn("OpenAI provider failed: {}. Falling back to Claude", e.getMessage());
+            try {
+                aiResponse = claudeProvider.generateResponse(finalPrompt);
+                providerUsed = "Claude";
+                logger.info("Successfully received response from Claude (fallback)");
+            } catch (Exception claudeException) {
+                logger.error("Both AI providers failed. OpenAI: {}, Claude: {}",
+                    e.getMessage(), claudeException.getMessage());
+                aiResponse = "AI service temporarily unavailable. Both OpenAI and Claude failed to respond.";
+                providerUsed = "None";
+            }
         }
 
-        return new OpenAIPromptResponse(finalPrompt, openaiResponse);
+        logger.info("AI Provider used: {}", providerUsed);
+        return new OpenAIPromptResponse(finalPrompt, aiResponse);
     }
 
     private String buildDeceasedInfo(Memorial memorial) {
