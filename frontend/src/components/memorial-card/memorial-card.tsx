@@ -13,7 +13,21 @@ export const MemorialCard = ({
   selectedMemorialId?: string;
 }) => {
   return (
-    <div className={`profile-card ${selectedMemorialId ? 'details-view' : ''}`} key={memorial.id}>
+    <Box
+      key={memorial.id}
+      sx={(theme) => ({
+        backgroundColor: 'white',
+        borderRadius: theme.spacing(1.5),
+        boxShadow: theme.shadows[3],
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'transform 0.2s ease',
+        '&:hover': {
+          transform: !selectedMemorialId ? 'translateY(-4px)' : ''
+        }
+      })}
+    >
       <img
         src={
           memorial.profileImageUrl ||
@@ -55,6 +69,6 @@ export const MemorialCard = ({
         </>
       )}
       <Divider />
-    </div>
+    </Box>
   );
 };
