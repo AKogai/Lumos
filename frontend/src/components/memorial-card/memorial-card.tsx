@@ -36,10 +36,7 @@ export const MemorialCard = ({
             height: '220px',
             objectFit: 'cover'
           }}
-          src={
-            memorial.profileImageUrl ||
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(memorial.firstName + ' ' + memorial.lastName)}&background=random`
-          }
+          src={memorial.profileImageUrl || `/person${Number(selectedMemorialId ?? memorial.id) % 6}.jpeg`}
           alt={`${memorial.firstName} ${memorial.lastName}`}
         />
         <Box
