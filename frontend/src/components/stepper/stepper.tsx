@@ -18,7 +18,7 @@ import { JSX, useCallback, useMemo, useState } from 'react';
 import { relationshipOptions } from './relationship-options';
 import { toneOptions } from './tone-options';
 import { useContentRequest } from '../../hooks/use-content-request';
-import { contextOptions } from './context-options';
+import { religionOptions } from './religion-options';
 import { LinearProgress } from '../linear-progress/linear-progress';
 import { MemorialCaseResponse } from '../../api/funeral-cases';
 import { useQueryClient } from '@tanstack/react-query';
@@ -31,12 +31,12 @@ interface StepConf {
 type ResType = {
   relationship: string;
   tone: string;
-  context: string;
+  religion: string;
   memory: string;
   knowsForHowLong: string;
 };
 
-const defaultValue = { relationship: '', tone: '', context: '', memory: '', knowsForHowLong: '' };
+const defaultValue = { relationship: '', tone: '', religion: '', memory: '', knowsForHowLong: '' };
 
 export const Stepper = ({ memorial, onFinish }: { memorial: MemorialCaseResponse; onFinish: () => void }) => {
   const queryClient = useQueryClient();
@@ -121,8 +121,8 @@ export const Stepper = ({ memorial, onFinish }: { memorial: MemorialCaseResponse
           {
             caseId: memorial.id.toString(),
             tone: res.tone,
-            language: 'language',
-            userInfo: res.relationship
+            religion: res.religion,
+            userInfo: `User has ${res.relationship} to deceased. ${res.memory ? `User shares this memory with the deceased: ${res.memory}` : ''} ${res.knowsForHowLong ? `User knows deceased for this long: ${res.knowsForHowLong}.` : ''}`
           },
           {
             onError: () => {
@@ -211,10 +211,10 @@ export const Stepper = ({ memorial, onFinish }: { memorial: MemorialCaseResponse
           <>
             <Autocomplete
               freeSolo
-              defaultValue={res.context}
-              onChange={(_, value) => updateRes({ context: value })}
-              onInputChange={(_, newInputValue) => updateRes({ context: newInputValue })}
-              options={res.context ? contextOptions : []}
+              defaultValue={res.religion}
+              onChange={(_, value) => updateRes({ religion: value })}
+              onInputChange={(_, newInputValue) => updateRes({ religion: newInputValue })}
+              options={res.religion ? religionOptions : []}
               renderInput={(params) => <TextField {...params} {...commonProps} />}
             />
             {!!steps[activeStep].hint && <FormHelperText>{steps[activeStep].hint}</FormHelperText>}
@@ -246,7 +246,7 @@ export const Stepper = ({ memorial, onFinish }: { memorial: MemorialCaseResponse
   }, [
     activeStep,
     commonProps,
-    res.context,
+    res.religion,
     res.knowsForHowLong,
     res.memory,
     res.relationship,
