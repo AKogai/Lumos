@@ -60,8 +60,8 @@ export const Stepper = () => {
       !['Co-Worker'].includes(res.relationship) &&
       !['Very Formal'].includes(res.tone)
     ) {
-      result.push({ label: 'How long do you know him/her?' });
-      result.push({ label: 'Do you want to share a memory about the deceased?' });
+      result.push({ label: 'How long do you know the deceased?' });
+      result.push({ label: 'Do you want to share a memory or something else in your condolence?' });
     }
 
     return result;
@@ -210,7 +210,17 @@ export const Stepper = () => {
       default:
         return <div>Unknown step</div>;
     }
-  }, [activeStep, commonProps, res.context, res.knowsForHowLong, res.memory, res.relationship, res.tone, updateRes]);
+  }, [
+    activeStep,
+    commonProps,
+    res.context,
+    res.knowsForHowLong,
+    res.memory,
+    res.relationship,
+    res.tone,
+    updateRes,
+    steps
+  ]);
 
   return (
     <Box sx={{ width: '100%' }}>
