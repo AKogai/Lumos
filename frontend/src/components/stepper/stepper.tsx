@@ -37,7 +37,6 @@ const defaultValue = { relationship: '', tone: '', context: '', memory: '', know
 export const Stepper = () => {
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
-  // TODO: shape the res as needed for posting to backend - this is just a WIP
   const [res, setRes] = useState<ResType>(defaultValue);
   const { mutateAsync, data, error, isPending, reset } = useContentRequest();
 
