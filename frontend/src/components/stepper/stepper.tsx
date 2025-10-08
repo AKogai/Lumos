@@ -22,6 +22,7 @@ import { contextOptions } from './context-options';
 
 interface StepConf {
   label: string;
+  hint?: string;
 }
 
 type ResType = {
@@ -42,9 +43,15 @@ export const Stepper = () => {
 
   const steps: Array<StepConf> = useMemo(() => {
     const result = [
-      { label: 'What is your relation to the deceased person?' },
-      { label: 'What tone do you want?' },
-      { label: 'Is there an important context in the message for you?' }
+      {
+        label: 'What is your relation to the deceased person?',
+        hint: 'Type in the field or choose from the pre-defined list.'
+      },
+      { label: 'What is your manner of expression?' },
+      {
+        label: 'Are there spiritual or cultural traditions that should be considered when composing the condolence?',
+        hint: 'Enter a culture, believe, religion or keep it blank.'
+      }
     ];
 
     if (
@@ -130,14 +137,17 @@ export const Stepper = () => {
     switch (activeStep) {
       case 0:
         return (
-          <Autocomplete
-            freeSolo
-            defaultValue={res.relationship}
-            onChange={(_, value) => updateRes({ relationship: value })}
-            onInputChange={(_, newInputValue) => updateRes({ relationship: newInputValue })}
-            options={!!res.relationship ? relationshipOptions : []}
-            renderInput={(params) => <TextField {...params} {...commonProps} />}
-          />
+          <>
+            <Autocomplete
+              freeSolo
+              defaultValue={res.relationship}
+              onChange={(_, value) => updateRes({ relationship: value })}
+              onInputChange={(_, newInputValue) => updateRes({ relationship: newInputValue })}
+              options={!!res.relationship ? relationshipOptions : []}
+              renderInput={(params) => <TextField {...params} {...commonProps} />}
+            />
+            {!!steps[activeStep].hint && <FormHelperText>{steps[activeStep].hint}</FormHelperText>}
+          </>
         );
       case 1:
         return (
@@ -165,14 +175,17 @@ export const Stepper = () => {
         );
       case 2:
         return (
-          <Autocomplete
-            freeSolo
-            defaultValue={res.context}
-            onChange={(_, value) => updateRes({ context: value })}
-            onInputChange={(_, newInputValue) => updateRes({ context: newInputValue })}
-            options={res.context ? contextOptions : []}
-            renderInput={(params) => <TextField {...params} {...commonProps} />}
-          />
+          <>
+            <Autocomplete
+              freeSolo
+              defaultValue={res.context}
+              onChange={(_, value) => updateRes({ context: value })}
+              onInputChange={(_, newInputValue) => updateRes({ context: newInputValue })}
+              options={res.context ? contextOptions : []}
+              renderInput={(params) => <TextField {...params} {...commonProps} />}
+            />
+            {!!steps[activeStep].hint && <FormHelperText>{steps[activeStep].hint}</FormHelperText>}
+          </>
         );
       case 3:
         return (
