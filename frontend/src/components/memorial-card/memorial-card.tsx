@@ -1,6 +1,5 @@
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { MemorialCaseResponse } from '../../api/funeral-cases';
-import { useEffect, useState } from 'react';
 
 export const MemorialCard = ({
   memorial,
