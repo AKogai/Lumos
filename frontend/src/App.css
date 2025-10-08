@@ -5,33 +5,6 @@ body {
   color: #222;
 }
 
-.hero {
-  background: linear-gradient(90deg, rgba(240,228,250,1) 0%, rgba(220,210,250,1) 100%);
-  text-align: center;
-  padding: 80px 20px;
-  color: #333;
-  font-size: 40px;
-  font-weight: 500;
-}
-
-.content {
-  padding: 60px 80px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.section-title {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 32px;
-}
-
-.profiles-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
-}
-
 .profile-card {
   background-color: #fff;
   border-radius: 12px;

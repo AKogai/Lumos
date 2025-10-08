@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { Stepper } from './components/stepper/stepper';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Link, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { getCases } from './api/funeral-cases';
 import { enqueueSnackbar } from 'notistack';
@@ -45,20 +45,46 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <section className="hero">
-        <h1>Condolence helpers</h1>
-      </section>
+    <>
+      <Box
+        sx={(theme) => ({
+          background: 'linear-gradient(90deg, rgba(240,228,250,1) 0%, rgba(220,210,250,1) 100%)',
+          textAlign: 'center',
+          paddingX: theme.spacing(2.5),
+          paddingY: theme.spacing(10)
+        })}
+      >
+        <Link href="/" sx={{ textDecoration: 'none', color: 'black' }}>
+          <Typography sx={{ textDecoration: 'unset' }} variant="h1">
+            Memorial Page AI Content Assistant
+          </Typography>
+        </Link>
+      </Box>
 
-      <main className="content">
+      <Box
+        sx={(theme) => ({
+          paddingY: theme.spacing(7.5),
+          paddingX: theme.spacing(10),
+          maxWidth: 1200,
+          margin: '0 auto'
+        })}
+      >
         {!selectedProfile ? (
           <>
-            <h2 className="section-title">Remembering our loved ones</h2>
-            <div className="profiles-grid">
+            <Typography sx={(theme) => ({ marginBottom: theme.spacing(4) })} variant="h2">
+              Remembering our loved ones
+            </Typography>
+            <Box
+              sx={(theme) => ({
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: theme.spacing(3)
+              })}
+            >
               {memorials?.data?.map((p) => (
                 <MemorialCard key={p.id} memorial={p} openMemorialDetails={setSelectedProfile} />
               ))}
-            </div>
+            </Box>
           </>
         ) : (
           <Box sx={{ maxWidth: 600, margin: '0 auto', padding: 2 }}>
@@ -82,8 +108,8 @@ function App() {
             )}
           </Box>
         )}
-      </main>
-    </div>
+      </Box>
+    </>
   );
 }
 
