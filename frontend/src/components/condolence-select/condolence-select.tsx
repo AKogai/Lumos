@@ -6,22 +6,22 @@ export const CondolenceSelect = ({
   onAfterSave
 }: {
   suggestions: Array<string>;
-  onAfterSave: (selectedCondolence: string) => void;
+  onAfterSave: (selectedCondolence: string, name: string) => void;
 }) => {
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-  const [isSettingValue, setIsSettingValue] = useState(false);
-
-  const currentDefaultValue = useMemo(() => suggestions[selectedIdx] || '', [selectedIdx, suggestions]);
+  const [name, setName] = useState('');
+  const [condolence, setCondolence] = useState(suggestions[0] || '');
+  const [selectedIdx, setSelectedIdx] = useState(0);
 
   const updateSelectedIdx = (index: number) => {
-    setIsSettingValue(true);
-    setSelectedIdx(index === selectedIdx ? null : index);
-    setTimeout(() => setIsSettingValue(false), 100);
+    console.log('index? ', index);
+    if (index !== selectedIdx) {
+      setCondolence(suggestions[index]);
+    }
+    setSelectedIdx(index);
   };
 
   const handleSaveCondolence = () => {
-    console.log('TODO');
-    onAfterSave(suggestions[selectedIdx]);
+    onAfterSave(condolence, name);
   };
 
   return (
@@ -33,26 +33,20 @@ export const CondolenceSelect = ({
             padding: 2,
             borderStyle: 'solid',
             borderWidth: 1,
-            borderColor: index === selectedIdx ? theme.palette.primary.main : '#ccc',
-            borderRadius: 1
+            borderColor: index === selectedIdx ? theme.palette.primary.main : ' #ccc',
+            borderRadius: 1,
+            cursor: 'pointer'
           })}
           onClick={() => updateSelectedIdx(index)}
         >
           <Typography>{s}</Typography>
         </Box>
       ))}
-      {selectedIdx !== null && (
-        <>
-          {!isSettingValue ? (
-            <TextField multiline rows={4} defaultValue={currentDefaultValue} />
-          ) : (
-            <TextField multiline rows={4} disabled />
-          )}
-          <Button onClick={handleSaveCondolence} variant="contained">
-            Save
-          </Button>
-        </>
-      )}
+      <TextField multiline rows={4} value={condolence} onChange={(event) => setCondolence(event.target.value)} />
+      <TextField placeholder="First and Last Name" onChange={(event) => setName(event.target.value)} />
+      <Button disabled={!name} onClick={handleSaveCondolence} variant="contained">
+        Post Condolence
+      </Button>
     </Stack>
   );
 };

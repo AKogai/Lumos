@@ -2,6 +2,7 @@ import { api } from './config';
 
 export interface Condolence {
   message: string;
+  name: string;
 }
 
 export interface MemorialCaseResponse {

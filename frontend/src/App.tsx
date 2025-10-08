@@ -53,13 +53,13 @@ function App() {
     [memorials, selectedProfileId]
   );
 
-  const fakeUpdateApiData = (savedCondolence: string) => {
+  const fakeUpdateApiData = (savedCondolence: string, name: string) => {
     queryClient.setQueryData(['memorial-cases'], (old: Array<MemorialCaseResponse>) => {
       const updated = old.map((item) =>
         item.id === selectedProfileId
           ? {
               ...item,
-              condolences: [...item.condolences, { message: savedCondolence }]
+              condolences: [...item.condolences, { message: savedCondolence, name }]
             }
           : item
       );
