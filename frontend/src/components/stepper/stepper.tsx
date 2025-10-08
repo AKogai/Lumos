@@ -16,10 +16,15 @@ import {
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { relationshipOptions } from './relationship-options';
 import { toneOptions } from '../tone-options';
+import { useContentRequest } from '../../hooks/use-content-request';
 
 interface StepConf {
   label: string;
 }
+
+type ResType = {
+  relationship: string;
+};
 
 const steps: Array<StepConf> = [
   { label: 'What is your relation to the deceased person?' },
@@ -34,6 +39,9 @@ export const Stepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   // TODO: shape the res as needed for posting to backend - this is just a WIP
   const [res, setRes] = useState<any>(defaultValue);
+  const { mutateAsync, data, error, isPending } = useContentRequest();
+
+  const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep]);
 
   const isCurrentStepValid = useMemo((): boolean => {
     switch (activeStep) {
@@ -56,8 +64,11 @@ export const Stepper = () => {
     [isCurrentStepValid, isNextClicked]
   );
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setIsNextClicked(true);
+    if (isLastStep) {
+      await mutateAsync({ caseId: '1', tone: 'tone', language: 'language', userInfo: 'userInfo' });
+    }
     if (isCurrentStepValid) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
       setIsNextClicked(false);
@@ -74,7 +85,7 @@ export const Stepper = () => {
   };
 
   const updateRes = useCallback((value) => {
-    setRes((prev: any) => ({ ...prev, ...value }));
+    setRes((prev: ResType) => ({ ...prev, ...value }));
   }, []);
 
   const currentStepContent = useMemo((): JSX.Element => {
@@ -125,8 +136,8 @@ export const Stepper = () => {
                 <StepContent>
                   {currentStepContent}
                   <Box sx={{ mb: 2 }}>
-                    <Button variant="contained" onClick={handleNext} sx={{ mt: 1, mr: 1 }}>
-                      {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                    <Button variant="contained" onClick={handleNext} sx={{ mt: 1, mr: 1 }} loading={isPending}>
+                      {isPending ? 'Loading...' : isLastStep ? 'Finish' : 'Continue'}
                     </Button>
                     <Button disabled={index === 0} onClick={handleBack} sx={{ mt: 1, mr: 1 }}>
                       Back
@@ -140,7 +151,15 @@ export const Stepper = () => {
       </Paper>
       {activeStep === steps.length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography>All steps completed - you&apos;re finished</Typography>
+          <Typography>
+            {data
+              ? `Content Suggestion: ${data.openaiResponse}`
+              : isPending
+                ? 'Loading...'
+                : error
+                  ? `Error: ${error.message}`
+                  : 'Pending...'}
+          </Typography>
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             Reset
           </Button>
