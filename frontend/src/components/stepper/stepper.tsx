@@ -8,20 +8,16 @@ import {
   StepContent,
   StepLabel,
   TextField,
-  Typography,
-} from "@mui/material";
-import { JSX, useCallback, useMemo, useState } from "react";
-import { relationshipOptions } from "./relationship-options";
+  Typography
+} from '@mui/material';
+import { JSX, useCallback, useMemo, useState } from 'react';
+import { relationshipOptions } from './relationship-options';
 
 interface StepConf {
   label: string;
 }
 
-const steps: Array<StepConf> = [
-  { label: "first" },
-  { label: "second" },
-  { label: "third" },
-];
+const steps: Array<StepConf> = [{ label: 'first' }, { label: 'second' }, { label: 'third' }];
 
 export const Stepper = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -74,7 +70,7 @@ export const Stepper = () => {
   }, [activeStep, res.relationship, updateRelationshipValue]);
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: '100%' }}>
       <Paper square elevation={0} sx={{ p: 3 }}>
         <MuiStepper activeStep={activeStep} orientation="vertical">
           {steps.map((step, index) => {
@@ -85,18 +81,10 @@ export const Stepper = () => {
                 <StepContent>
                   {currentStepContent}
                   <Box sx={{ mb: 2 }}>
-                    <Button
-                      variant="contained"
-                      onClick={handleNext}
-                      sx={{ mt: 1, mr: 1 }}
-                    >
-                      {index === steps.length - 1 ? "Finish" : "Continue"}
+                    <Button variant="contained" onClick={handleNext} sx={{ mt: 1, mr: 1 }}>
+                      {index === steps.length - 1 ? 'Finish' : 'Continue'}
                     </Button>
-                    <Button
-                      disabled={index === 0}
-                      onClick={handleBack}
-                      sx={{ mt: 1, mr: 1 }}
-                    >
+                    <Button disabled={index === 0} onClick={handleBack} sx={{ mt: 1, mr: 1 }}>
                       Back
                     </Button>
                   </Box>
