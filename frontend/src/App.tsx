@@ -56,13 +56,34 @@ function App() {
     <>
       <Box
         sx={(theme) => ({
+          position: 'relative',
           background: 'linear-gradient(90deg, rgba(240,228,250,1) 0%, rgba(220,210,250,1) 100%)',
           textAlign: 'center',
           paddingX: theme.spacing(2.5),
           paddingY: theme.spacing(10)
         })}
       >
-        <Link href="/" sx={{ textDecoration: 'none', color: 'black' }}>
+        <img
+          src={'/hero.jpg'}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 0
+          }}
+        />
+        <Link
+          href="/"
+          sx={(theme) => ({
+            position: 'relative',
+            textDecoration: 'none',
+            color: 'black',
+            zIndex: 1
+          })}
+        >
           <Typography sx={{ textDecoration: 'unset' }} variant="h1">
             Memorial Page Content Assistant
           </Typography>
