@@ -203,7 +203,7 @@ export const Stepper = () => {
         <MuiStepper activeStep={activeStep} orientation="vertical">
           {steps.map((step, index) => {
             return (
-              <Step>
+              <Step key={index}>
                 <StepLabel>{step.label}</StepLabel>
                 <StepContent>
                   {currentStepContent}
