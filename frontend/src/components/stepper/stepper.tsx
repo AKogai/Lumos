@@ -35,7 +35,7 @@ export const Stepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   // TODO: shape the res as needed for posting to backend - this is just a WIP
   const [res, setRes] = useState<any>(defaultValue);
-  const { mutate, data, isPending } = useContentRequest();
+  const { mutateAsync, data, isPending } = useContentRequest();
 
   const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep]);
 
@@ -52,10 +52,10 @@ export const Stepper = () => {
     }
   }, [activeStep, res.relationship]);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setIsNextClicked(true);
     if (isLastStep) {
-      mutate({ caseId: '1', tone: 'tone', language: 'language', userInfo: 'userInfo' });
+      await mutateAsync({ caseId: '1', tone: 'tone', language: 'language', userInfo: 'userInfo' });
     }
     if (isCurrentStepValid) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
