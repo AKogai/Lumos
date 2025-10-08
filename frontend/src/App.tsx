@@ -172,7 +172,7 @@ function App() {
                         onClick={() => setShouldShowStepper(true)}
                         sx={{ mb: 2, width: '100%' }}
                       >
-                        Start AI Condolence Support
+                        Start AI Condolence Assistant
                       </Button>
                     </Box>
                     <CondolenceSelect suggestions={[]} onAfterSave={fakeUpdateApiData} />
