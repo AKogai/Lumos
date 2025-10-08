@@ -21,6 +21,7 @@ export const CondolenceSelect = ({
 
   const handleSaveCondolence = () => {
     console.log('TODO');
+    onAfterSave(suggestions[selectedIdx]);
   };
 
   return (
