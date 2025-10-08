@@ -1,5 +1,6 @@
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { MemorialCaseResponse } from '../../api/funeral-cases';
+import { useEffect, useState } from 'react';
 
 export const MemorialCard = ({
   memorial,
@@ -48,7 +49,7 @@ export const MemorialCard = ({
           flexGrow: 1
         })}
       >
-        <Typography sx={(theme) => ({ marginBottom: theme.spacing(0.5) })} variant="h3">
+        <Typography sx={(theme) => ({ marginBottom: theme.spacing(0.5) })} variant="h4">
           {memorial.firstName} {memorial.middleName ? memorial.middleName + ' ' : ''}
           {memorial.lastName}
         </Typography>
@@ -68,7 +69,7 @@ export const MemorialCard = ({
           sx={{ mt: 2 }}
           onClick={() => (selectedMemorialId ? handleWriteCondolence() : openMemorialDetails(memorial))}
         >
-          {selectedMemorialId ? 'Write condolence →' : 'View details'}
+          <Typography fontWeight="500">{selectedMemorialId ? 'Write condolence →' : 'View details'}</Typography>
         </Button>
       </Box>
       {selectedMemorialId && memorial.condolences.length > 0 && (

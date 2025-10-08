@@ -268,10 +268,12 @@ export const Stepper = ({ memorial, onFinish }: { memorial: MemorialCaseResponse
                   {currentStepContent}
                   <Box sx={{ mb: 2 }}>
                     <Button variant="contained" onClick={handleNext} sx={{ mt: 1, mr: 1 }} loading={isPending}>
-                      {isPending ? 'Loading...' : isLastStep ? 'Finish' : 'Continue'}
+                      <Typography fontWeight="500">
+                        {isPending ? 'Loading...' : isLastStep ? 'Finish' : 'Continue'}
+                      </Typography>
                     </Button>
                     <Button disabled={index === 0} onClick={handleBack} sx={{ mt: 1, mr: 1 }}>
-                      Back
+                      <Typography fontWeight="500">Back</Typography>
                     </Button>
                   </Box>
                 </StepContent>
@@ -284,7 +286,7 @@ export const Stepper = ({ memorial, onFinish }: { memorial: MemorialCaseResponse
         <Paper square elevation={0} sx={{ p: 3 }}>
           {data && <Typography>Content suggestion: {data.data.openaiResponse}</Typography>}
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-            Reset
+            <Typography fontWeight="500">Reset</Typography>
           </Button>
         </Paper>
       )}

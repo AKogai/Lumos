@@ -33,7 +33,6 @@ function App() {
     queryFn: getCases,
     queryKey: ['memorial-cases'],
     enabled: !!health && !loading
-    // TODO: Ask Aleksei to add that to the API
   });
 
   const handleWriteCondolence = () => {
@@ -57,7 +56,7 @@ function App() {
       >
         <Link href="/" sx={{ textDecoration: 'none', color: 'black' }}>
           <Typography sx={{ textDecoration: 'unset' }} variant="h1">
-            Memorial Page AI Content Assistant
+            Memorial Page Content Assistant
           </Typography>
         </Link>
       </Box>
@@ -72,7 +71,7 @@ function App() {
       >
         {!selectedProfile ? (
           <>
-            <Typography sx={(theme) => ({ marginBottom: theme.spacing(4) })} variant="h2">
+            <Typography sx={(theme) => ({ marginBottom: theme.spacing(4) })} variant="h3">
               Remembering our loved ones
             </Typography>
             <Box
@@ -90,7 +89,7 @@ function App() {
         ) : (
           <Box sx={{ maxWidth: 600, margin: '0 auto', padding: 2 }}>
             <Button variant="outlined" onClick={handleBackToList} sx={{ mb: 2 }}>
-              ← Back to list
+              <Typography fontWeight="500">← Back to list</Typography>
             </Button>
             {isWritingCondolence ? (
               <>
