@@ -1,7 +1,13 @@
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 
-export const CondolenceSelect = ({ suggestions }: { suggestions: Array<string> }) => {
+export const CondolenceSelect = ({
+  suggestions,
+  onAfterSave
+}: {
+  suggestions: Array<string>;
+  onAfterSave: (selectedCondolence: string) => void;
+}) => {
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [isSettingValue, setIsSettingValue] = useState(false);
 

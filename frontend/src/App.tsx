@@ -3,8 +3,8 @@ import './App.css';
 import { Stepper } from './components/stepper/stepper';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Box, Button, Link, Typography } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { getCases } from './api/funeral-cases';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getCases, MemorialCaseResponse } from './api/funeral-cases';
 import { enqueueSnackbar } from 'notistack';
 import { MemorialCard } from './components/memorial-card/memorial-card';
 import { MemorialDetails } from './components/memorial-details/memorial-details';
@@ -16,6 +16,7 @@ function App() {
   const [selectedProfileId, setSelectedProfileId] = useState(null);
   const [isWritingCondolence, setIsWritingCondolence] = useState(false);
   const [condolencesForSelect, setCondolencesForSelect] = useState<Array<string>>([]);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const apiUrl = `${process.env.REACT_APP_API_URL}/api/health`;
@@ -51,6 +52,24 @@ function App() {
     () => memorials?.find((p) => p.id === selectedProfileId),
     [memorials, selectedProfileId]
   );
+
+  const fakeUpdateApiData = (savedCondolence: string) => {
+    queryClient.setQueryData(['memorial-cases'], (old: Array<MemorialCaseResponse>) => {
+      const updated = old.map((item) =>
+        item.id === selectedProfileId
+          ? {
+              ...item,
+              condolences: [...item.condolences, { message: savedCondolence }]
+            }
+          : item
+      );
+
+      return updated;
+    });
+
+    setIsWritingCondolence(false);
+    setCondolencesForSelect([]);
+  };
 
   return (
     <>
@@ -106,7 +125,7 @@ function App() {
                     <Stepper memorial={selectedProfile} onFinish={setCondolencesForSelect} />
                   </ErrorBoundary>
                 ) : (
-                  <CondolenceSelect suggestions={condolencesForSelect} />
+                  <CondolenceSelect suggestions={condolencesForSelect} onAfterSave={fakeUpdateApiData} />
                 )}
               </>
             ) : (

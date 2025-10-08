@@ -101,21 +101,6 @@ export const Stepper = ({
     [isCurrentStepValid, isNextClicked]
   );
 
-  // const fakeUpdateApiData = () => {
-  //   queryClient.setQueryData(['memorial-cases'], (old: Array<MemorialCaseResponse>) => {
-  //     const updated = old.map((item) =>
-  //       item.id === memorial.id
-  //         ? {
-  //             ...item,
-  //             condolences: [...item.condolences, { message: [res.tone, res.relationship, res.memory].join(' - ') }]
-  //           }
-  //         : item
-  //     );
-
-  //     return updated;
-  //   });
-  // };
-
   const handleNext = async () => {
     try {
       setIsNextClicked(true);
