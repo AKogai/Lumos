@@ -73,32 +73,32 @@ export const MemorialCard = ({
           </Button>
         </Box>
       </Box>
-      {selectedMemorialId && memorial.condolences.length > 0 && (
-        <Box
-          sx={(theme) => ({
-            backgroundColor: 'white',
-            borderRadius: theme.spacing(1.5),
-            boxShadow: theme.shadows[3],
-            padding: theme.spacing(2),
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            transition: 'transform 0.2s ease',
-            '&:hover': {
-              transform: !selectedMemorialId ? 'translateY(-4px)' : ''
-            }
-          })}
-        >
-          <>
-            {memorial.condolences.map((cd, idx, array) => (
+      {selectedMemorialId &&
+        memorial.condolences.length > 0 &&
+        memorial.condolences.map((cd, idx, array) => (
+          <Box
+            sx={(theme) => ({
+              backgroundColor: 'white',
+              borderRadius: theme.spacing(1.5),
+              boxShadow: theme.shadows[3],
+              padding: theme.spacing(2),
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              transition: 'transform 0.2s ease',
+              '&:hover': {
+                transform: !selectedMemorialId ? 'translateY(-4px)' : ''
+              }
+            })}
+          >
+            <>
               <Box sx={(theme) => ({ marginBottom: array.length - 1 === idx ? 0 : theme.spacing(2) })} key={idx}>
-                <Typography>{cd.name}</Typography>
+                <Typography>Condolence from {cd.name}</Typography>
                 <Typography sx={(theme) => ({ marginTop: theme.spacing(2), color: 'grey' })}>{cd.message}</Typography>
               </Box>
-            ))}
-          </>
-        </Box>
-      )}
+            </>
+          </Box>
+        ))}
     </Box>
   );
 };

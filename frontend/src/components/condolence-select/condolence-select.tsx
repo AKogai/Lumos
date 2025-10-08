@@ -1,5 +1,6 @@
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 export const CondolenceSelect = ({
   suggestions,
@@ -21,6 +22,7 @@ export const CondolenceSelect = ({
 
   const handleSaveCondolence = () => {
     onAfterSave(condolence, name);
+    enqueueSnackbar(`Condolence posted!`, { variant: 'success' });
   };
 
   return (
