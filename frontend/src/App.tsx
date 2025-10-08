@@ -156,7 +156,7 @@ function App() {
               <>
                 {shouldShowStepper ? (
                   <>
-                    {!condolencesForSelect ? (
+                    {!condolencesForSelect?.length ? (
                       <ErrorBoundary fallback={<Typography>Something went wrong in the Stepper component.</Typography>}>
                         <Stepper memorial={selectedProfile} onFinish={setCondolencesForSelect} />
                       </ErrorBoundary>
@@ -175,7 +175,7 @@ function App() {
                         Start AI Condolence Assistant
                       </Button>
                     </Box>
-                    <CondolenceSelect suggestions={null} onAfterSave={fakeUpdateApiData} />
+                    <CondolenceSelect suggestions={[]} onAfterSave={fakeUpdateApiData} />
                   </>
                 )}
               </>

@@ -146,7 +146,6 @@ export const Stepper = ({
     }
   };
 
-  setProgress(0);
   const updateRes = useCallback((value) => {
     setRes((prev: ResType) => ({ ...prev, ...value }));
   }, []);
