@@ -105,12 +105,19 @@ export const Stepper = ({
     try {
       setIsNextClicked(true);
       if (isLastStep) {
-        const result = await mutateAsync({
-          caseId: memorial.id.toString(),
-          tone: res.tone,
-          religion: res.religion,
-          userInfo: `User has ${res.relationship} to deceased. ${res.memory ? `User shares this memory with the deceased: ${res.memory}` : ''} ${res.knowsForHowLong ? `User knows deceased for this long: ${res.knowsForHowLong}.` : ''}`
-        }).catch(() => {
+        const result = await mutateAsync(
+          {
+            caseId: memorial.id.toString(),
+            tone: res.tone,
+            religion: res.religion,
+            userInfo: `User has ${res.relationship} to deceased. ${res.memory ? `User shares this memory with the deceased: ${res.memory}` : ''} ${res.knowsForHowLong ? `User knows deceased for this long: ${res.knowsForHowLong}.` : ''}`
+          },
+          {
+            onSuccess: (data) => {
+              console.log('TODO: call onFinish with data (and remove onFinish from .catch() ) => ', data);
+            }
+          }
+        ).catch(() => {
           onFinish(['string#1', 'string#2']);
           // Error is already handled by React Query and available in `error` prop
           return null;
