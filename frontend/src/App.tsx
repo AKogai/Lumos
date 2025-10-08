@@ -127,7 +127,8 @@ function App() {
               sx={(theme) => ({
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                gap: theme.spacing(3)
+                gap: theme.spacing(3),
+                alignItems: 'stretch'
               })}
             >
               {memorials?.map((p) => (
