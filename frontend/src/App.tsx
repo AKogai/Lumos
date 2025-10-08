@@ -43,11 +43,19 @@ function App() {
     setIsWritingCondolence(true);
   };
 
-  const handleBackToList = () => {
-    setSelectedProfileId(null);
-    setIsWritingCondolence(false);
-    setCondolencesForSelect([]);
-    setShouldShowStepper(false);
+  const handleBackClick = () => {
+    if (selectedProfileId) {
+      if (!isWritingCondolence) {
+        setSelectedProfileId(null);
+      } else {
+        if (shouldShowStepper) {
+          setShouldShowStepper(false);
+          setCondolencesForSelect([]);
+        } else {
+          setIsWritingCondolence(false);
+        }
+      }
+    }
   };
 
   const selectedProfile = useMemo(
@@ -141,8 +149,8 @@ function App() {
           </>
         ) : (
           <Box sx={{ maxWidth: 600, margin: '0 auto', padding: 2 }}>
-            <Button variant="outlined" onClick={handleBackToList} sx={{ mb: 2 }}>
-              <Typography fontWeight="500">← Back to list</Typography>
+            <Button variant="outlined" onClick={handleBackClick} sx={{ mb: 2 }}>
+              <Typography fontWeight="500">← Back</Typography>
             </Button>
             {isWritingCondolence ? (
               <>
