@@ -33,6 +33,7 @@ function App() {
     queryFn: getCases,
     queryKey: ['memorial-cases'],
     enabled: !!health && !loading,
+    // TODO: Ask Aleksei to add that to the API
     select: (res) => res.data.map((item) => ({ ...item, condolences: [] }))
   });
 
@@ -82,7 +83,7 @@ function App() {
                 gap: theme.spacing(3)
               })}
             >
-              {memorials.map((p) => (
+              {memorials?.map((p) => (
                 <MemorialCard key={p.id} memorial={p} openMemorialDetails={setSelectedProfile} />
               ))}
             </Box>

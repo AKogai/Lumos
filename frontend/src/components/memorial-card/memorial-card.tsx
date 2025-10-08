@@ -29,35 +29,48 @@ export const MemorialCard = ({
       })}
     >
       <img
+        style={{
+          width: '100%',
+          height: '220px',
+          objectFit: 'cover'
+        }}
         src={
           memorial.profileImageUrl ||
           `https://ui-avatars.com/api/?name=${encodeURIComponent(memorial.firstName + ' ' + memorial.lastName)}&background=random`
         }
         alt={`${memorial.firstName} ${memorial.lastName}`}
       />
-      <div className="profile-content">
-        <h3>
+      <Box
+        sx={(theme) => ({
+          padding: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1
+        })}
+      >
+        <Typography sx={(theme) => ({ marginBottom: theme.spacing(0.5) })} variant="h3">
           {memorial.firstName} {memorial.middleName ? memorial.middleName + ' ' : ''}
           {memorial.lastName}
-        </h3>
-        <p className="lifespan">
-          {memorial.bornDate} – {memorial.deathDate}
-        </p>
-        <p className="bio">
+        </Typography>
+        <Typography sx={(theme) => ({ marginBottom: theme.spacing(2), color: 'gray', flexGrow: 1 })}>
           {!selectedMemorialId && memorial.biography.length > 160
             ? memorial.biography.substring(0, 160) + '...'
             : memorial.biography}
-        </p>
-        <p className="location">
+        </Typography>
+        <Typography sx={(theme) => ({ marginBottom: theme.spacing(0.25), color: 'gray' })}>
+          {memorial.bornDate} – {memorial.deathDate}
+        </Typography>
+        <Typography sx={(theme) => ({ marginBottom: theme.spacing(1), color: 'gray' })}>
           {memorial.placeOfBirth} → {memorial.placeOfDeath}
-        </p>
+        </Typography>
         <Button
+          variant="contained"
           sx={{ mt: 2 }}
           onClick={() => (selectedMemorialId ? handleWriteCondolence() : openMemorialDetails(memorial))}
         >
           {selectedMemorialId ? 'Write condolence →' : 'View details'}
         </Button>
-      </div>
+      </Box>
       {selectedMemorialId && memorial.condolences.length > 0 && (
         <>
           <Divider />

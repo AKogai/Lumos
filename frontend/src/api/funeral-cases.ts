@@ -1,4 +1,4 @@
-import { AxiosResponse } from './../../node_modules/axios/index.d';
+import { AxiosResponse } from 'axios';
 import { api } from './config';
 
 export interface Condolence {
