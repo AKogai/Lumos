@@ -53,15 +53,13 @@ export const Stepper = () => {
   }, [activeStep, res.relationship]);
 
   const handleNext = () => {
+    setIsNextClicked(true);
     if (isLastStep) {
       mutate({ caseId: '1', tone: 'tone', language: 'language', userInfo: 'userInfo' });
-    } else {
+    }
+    if (isCurrentStepValid) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      setIsNextClicked(true);
-      if (isCurrentStepValid) {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setIsNextClicked(false);
-      }
+      setIsNextClicked(false);
     }
   };
 
