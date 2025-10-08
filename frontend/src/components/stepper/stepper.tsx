@@ -1,7 +1,10 @@
 import {
   Box,
+  Button,
   Stepper as MuiStepper,
+  Paper,
   Step,
+  StepContent,
   StepLabel,
   Typography,
 } from "@mui/material";
@@ -26,9 +29,17 @@ export const Stepper = () => {
     return skipped.has(step);
   };
 
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
-      <MuiStepper activeStep={activeStep}>
+      <MuiStepper activeStep={activeStep} orientation="vertical">
         {steps.map((step, index) => {
           const stepProps: { completed?: boolean } = {};
           const labelProps: {
@@ -45,6 +56,24 @@ export const Stepper = () => {
           return (
             <Step key={index} {...stepProps}>
               <StepLabel {...labelProps}>{step.label}</StepLabel>
+              <StepContent>
+                <Box sx={{ mb: 2 }}>
+                  <Button
+                    variant="contained"
+                    onClick={handleNext}
+                    sx={{ mt: 1, mr: 1 }}
+                  >
+                    {index === steps.length - 1 ? "Finish" : "Continue"}
+                  </Button>
+                  <Button
+                    disabled={index === 0}
+                    onClick={handleBack}
+                    sx={{ mt: 1, mr: 1 }}
+                  >
+                    Back
+                  </Button>
+                </Box>
+              </StepContent>
             </Step>
           );
         })}
