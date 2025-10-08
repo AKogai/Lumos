@@ -2,8 +2,11 @@ import {
   Autocomplete,
   Box,
   Button,
+  MenuItem,
   Stepper as MuiStepper,
   Paper,
+  Select,
+  SelectChangeEvent,
   Step,
   StepContent,
   StepLabel,
@@ -12,6 +15,7 @@ import {
 } from '@mui/material';
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { relationshipOptions } from './relationship-options';
+import { toneOptions } from '../tone-options';
 
 interface StepConf {
   label: string;
@@ -19,11 +23,11 @@ interface StepConf {
 
 const steps: Array<StepConf> = [
   { label: 'What is your relation to the deceased person?' },
-  { label: 'second' },
+  { label: 'What tone do you want?' },
   { label: 'third' }
 ];
 
-const defaultValue = { relationship: '' };
+const defaultValue = { relationship: '', tone: '' };
 
 export const Stepper = () => {
   const [isNextClicked, setIsNextClicked] = useState(false);
@@ -36,13 +40,21 @@ export const Stepper = () => {
       case 0:
         return res.relationship && res.relationship.length > 0;
       case 1:
-        return true;
+        return !!res.tone;
       case 2:
         return true;
       default:
         return false;
     }
-  }, [activeStep, res.relationship]);
+  }, [activeStep, res.relationship, res.tone]);
+
+  const commonProps = useMemo(
+    () => ({
+      error: isNextClicked && !isCurrentStepValid,
+      onFocus: () => setIsNextClicked(false)
+    }),
+    [isCurrentStepValid, isNextClicked]
+  );
 
   const handleNext = () => {
     setIsNextClicked(true);
@@ -75,23 +87,31 @@ export const Stepper = () => {
             onChange={(_, value) => updateRes({ relationship: value })}
             onInputChange={(_, newInputValue) => updateRes({ relationship: newInputValue })}
             options={relationshipOptions}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                error={isNextClicked && !isCurrentStepValid}
-                onFocus={() => setIsNextClicked(false)}
-              />
-            )}
+            renderInput={(params) => <TextField {...params} {...commonProps} />}
           />
         );
       case 1:
-        return <div>Step 2 content</div>;
+        return (
+          <Select
+            fullWidth
+            value={res.tone}
+            onChange={(event: SelectChangeEvent<string>) => {
+              updateRes({ tone: event.target.value });
+              setIsNextClicked(false);
+            }}
+            {...commonProps}
+          >
+            {toneOptions.map((tone) => (
+              <MenuItem value={tone}>{tone}</MenuItem>
+            ))}
+          </Select>
+        );
       case 2:
         return <div>Step 3 content</div>;
       default:
         return <div>Unknown step</div>;
     }
-  }, [activeStep, isCurrentStepValid, isNextClicked, res.relationship, updateRes]);
+  }, [activeStep, commonProps, res.relationship, res.tone, updateRes]);
 
   return (
     <Box sx={{ width: '100%' }}>
