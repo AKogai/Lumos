@@ -19,6 +19,7 @@ import { relationshipOptions } from './relationship-options';
 import { toneOptions } from './tone-options';
 import { useContentRequest } from '../../hooks/use-content-request';
 import { contextOptions } from './context-options';
+import { LinearProgress } from '../linear-progress/linear-progress';
 
 interface StepConf {
   label: string;
@@ -38,6 +39,7 @@ const defaultValue = { relationship: '', tone: '', context: '', memory: '', know
 export const Stepper = () => {
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [res, setRes] = useState<ResType>(defaultValue);
   const { mutateAsync, data, error, isPending, reset } = useContentRequest();
 
@@ -109,6 +111,7 @@ export const Stepper = () => {
       }
       if (isCurrentStepValid) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setProgress((prevProgress) => prevProgress + 100 / steps.length);
         setIsNextClicked(false);
       }
     } catch (e) {
@@ -225,6 +228,7 @@ export const Stepper = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper square elevation={0} sx={{ p: 3 }}>
+        <LinearProgress value={progress} />
         <MuiStepper activeStep={activeStep} orientation="vertical">
           {steps.map((step, index) => {
             return (
