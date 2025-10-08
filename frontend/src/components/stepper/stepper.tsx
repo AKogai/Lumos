@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { relationshipOptions } from './relationship-options';
-import { toneOptions } from '../tone-options';
+import { toneOptions } from './tone-options';
 import { useContentRequest } from '../../hooks/use-content-request';
 
 interface StepConf {
@@ -29,7 +29,7 @@ type ResType = {
 const steps: Array<StepConf> = [
   { label: 'What is your relation to the deceased person?' },
   { label: 'What tone do you want?' },
-  { label: 'third' }
+  { label: 'Is there an important context in the message for you?' }
 ];
 
 const defaultValue = { relationship: '', tone: '' };
@@ -38,7 +38,7 @@ export const Stepper = () => {
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   // TODO: shape the res as needed for posting to backend - this is just a WIP
-  const [res, setRes] = useState<any>(defaultValue);
+  const [res, setRes] = useState<typeof defaultValue>(defaultValue);
   const { mutateAsync, data, error, isPending } = useContentRequest();
 
   const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep]);
