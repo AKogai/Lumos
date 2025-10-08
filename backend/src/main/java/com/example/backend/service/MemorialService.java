@@ -58,7 +58,7 @@ public class MemorialService {
         Map<String, String> variables = new HashMap<>();
         variables.put("DECEASED_INFO", deceasedInfo);
 
-        // Add custom variables from request (TONE, LANGUAGE, USER_INFO)
+        // Add custom variables from request (TONE, RELIGION, USER_INFO)
         if (customVariables != null) {
             variables.putAll(customVariables);
         }
