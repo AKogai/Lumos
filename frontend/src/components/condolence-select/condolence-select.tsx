@@ -11,7 +11,7 @@ export const CondolenceSelect = ({
   onAfterSave: (selectedCondolence: string, name: string) => void;
 }) => {
   const [name, setName] = useState('');
-  const [condolence, setCondolence] = useState(suggestions[0] || '');
+  const [condolence, setCondolence] = useState(suggestions.familyMessage || '');
   const [selectedIdx, setSelectedIdx] = useState(0);
 
   const updateSelectedIdx = (index: number) => {
