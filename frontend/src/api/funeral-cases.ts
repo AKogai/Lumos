@@ -1,4 +1,3 @@
-import { AxiosResponse } from 'axios';
 import { api } from './config';
 
 export interface Condolence {
@@ -22,6 +21,7 @@ export interface MemorialCaseResponse {
   condolences: Condolence[];
 }
 
-export async function getCases(): Promise<AxiosResponse<Array<MemorialCaseResponse>>> {
-  return await api.get(`${process.env.REACT_APP_API_URL}/api/memorial`);
+export async function getCases(): Promise<Array<MemorialCaseResponse>> {
+  const response = await api.get(`${process.env.REACT_APP_API_URL}/api/memorial`);
+  return response.data.map((item) => ({ ...item, condolences: [] }));
 }

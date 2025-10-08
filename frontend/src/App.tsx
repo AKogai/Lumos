@@ -32,9 +32,8 @@ function App() {
   const { data: memorials } = useQuery({
     queryFn: getCases,
     queryKey: ['memorial-cases'],
-    enabled: !!health && !loading,
+    enabled: !!health && !loading
     // TODO: Ask Aleksei to add that to the API
-    select: (res) => res.data.map((item) => ({ ...item, condolences: [] }))
   });
 
   const handleWriteCondolence = () => {
@@ -96,7 +95,7 @@ function App() {
             {isWritingCondolence ? (
               <>
                 <ErrorBoundary fallback={<Typography>Something went wrong in the Stepper component.</Typography>}>
-                  <Stepper memorial={selectedProfile} />
+                  <Stepper memorial={selectedProfile} onFinish={() => setIsWritingCondolence(false)} />
                 </ErrorBoundary>
               </>
             ) : (

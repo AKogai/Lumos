@@ -21,6 +21,7 @@ import { useContentRequest } from '../../hooks/use-content-request';
 import { contextOptions } from './context-options';
 import { LinearProgress } from '../linear-progress/linear-progress';
 import { MemorialCaseResponse } from '../../api/funeral-cases';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface StepConf {
   label: string;
@@ -37,7 +38,8 @@ type ResType = {
 
 const defaultValue = { relationship: '', tone: '', context: '', memory: '', knowsForHowLong: '' };
 
-export const Stepper = ({ memorial }: { memorial: MemorialCaseResponse }) => {
+export const Stepper = ({ memorial, onFinish }: { memorial: MemorialCaseResponse; onFinish: () => void }) => {
+  const queryClient = useQueryClient();
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -95,20 +97,47 @@ export const Stepper = ({ memorial }: { memorial: MemorialCaseResponse }) => {
     [isCurrentStepValid, isNextClicked]
   );
 
+  const fakeUpdateApiData = () => {
+    queryClient.setQueryData(['memorial-cases'], (old: Array<MemorialCaseResponse>) => {
+      const updated = old.map((item) =>
+        item.id === memorial.id
+          ? {
+              ...item,
+              condolences: [...item.condolences, { message: [res.tone, res.relationship, res.memory].join(' - ') }]
+            }
+          : item
+      );
+
+      return updated;
+    });
+    onFinish();
+  };
+
   const handleNext = async () => {
     try {
       setIsNextClicked(true);
       if (isLastStep) {
-        const result = await mutateAsync({
-          caseId: memorial.id.toString(),
-          tone: res.tone,
-          language: 'language',
-          userInfo: res.relationship
-        }).catch(() => {
+        const result = await mutateAsync(
+          {
+            caseId: memorial.id.toString(),
+            tone: res.tone,
+            language: 'language',
+            userInfo: res.relationship
+          },
+          {
+            onError: () => {
+              // TODO-ET: fake handling since BE currently fails. has to land in onSuccess(), when BE fixed
+              fakeUpdateApiData();
+            }
+          }
+        ).catch(() => {
           // Error is already handled by React Query and available in `error` prop
           return null;
         });
-        if (!result) return;
+
+        if (!result) {
+          return;
+        }
       }
       if (isCurrentStepValid) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
