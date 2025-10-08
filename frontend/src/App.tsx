@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import { useState, useEffect } from "react";
+import "./App.css";
+import { Stepper } from "./components/stepper/stepper";
 
 function App() {
   const [health, setHealth] = useState(null);
@@ -7,14 +8,14 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const apiUrl = process.env.REACT_APP_API_URL || '/api/health';
+    const apiUrl = process.env.REACT_APP_API_URL || "/api/health";
     fetch(apiUrl)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         setHealth(data);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err.message);
         setLoading(false);
       });
@@ -30,10 +31,14 @@ function App() {
           {error && <p className="error">Error: {error}</p>}
           {health && (
             <div className="health-info">
-              <p>Status: <span className="success">{health.status}</span></p>
+              <p>
+                Status: <span className="success">{health.status}</span>
+              </p>
               <p>Message: {health.message}</p>
             </div>
           )}
+
+          {!loading && !error && <Stepper />}
         </div>
       </header>
     </div>
