@@ -35,7 +35,7 @@ export const Stepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   // TODO: shape the res as needed for posting to backend - this is just a WIP
   const [res, setRes] = useState<any>(defaultValue);
-  const { mutateAsync, data, isPending } = useContentRequest();
+  const { mutateAsync, data, error, isPending } = useContentRequest();
 
   const isLastStep = useMemo(() => activeStep === steps.length - 1, [activeStep]);
 
@@ -131,7 +131,15 @@ export const Stepper = () => {
       </Paper>
       {activeStep === steps.length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography>All steps completed - you&apos;re finished</Typography>
+          <Typography>
+            {data
+              ? `Content Suggestion: ${data.openaiResponse}`
+              : isPending
+                ? 'Loading...'
+                : error
+                  ? `Error: ${error.message}`
+                  : 'Pending...'}
+          </Typography>
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             Reset
           </Button>
