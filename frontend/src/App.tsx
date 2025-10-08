@@ -2,21 +2,35 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { Stepper } from './components/stepper/stepper';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { getCases } from './api/funeral-cases';
+import { enqueueSnackbar } from 'notistack';
 
 function App() {
-  const [profiles, setProfiles] = useState([]);
+  const [health, setHealth] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [selectedProfile, setSelectedProfile] = useState(null);
 
   useEffect(() => {
-    const apiUrl = `${process.env.REACT_APP_API_URL}/api/memorial`;
+    const apiUrl = `${process.env.REACT_APP_API_URL}/api/health`;
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => {
-        setProfiles(data);
+        setHealth(data);
+        setLoading(false);
       })
-      .catch(() => {});
+      .catch((err) => {
+        enqueueSnackbar(err.message, { variant: 'error' });
+        setLoading(false);
+      });
   }, []);
+
+  const { data: memorials } = useQuery({
+    queryFn: getCases,
+    queryKey: ['memorial-cases'],
+    enabled: !!health && !loading
+  });
 
   const handleWriteCondolence = (profile) => {
     setSelectedProfile(profile);
@@ -37,7 +51,7 @@ function App() {
           <>
             <h2 className="section-title">Remembering our loved ones</h2>
             <div className="profiles-grid">
-              {profiles.map((p) => (
+              {memorials?.data?.map((p) => (
                 <div className="profile-card" key={p.id}>
                   <img
                     src={
@@ -72,9 +86,9 @@ function App() {
           </>
         ) : (
           <div className="memorial-stepper">
-            <button className="back-btn" onClick={handleBackToList}>
+            <Button variant="outlined" onClick={handleBackToList}>
               ← Back to list
-            </button>
+            </Button>
             <h2 className="section-title">
               Write a condolence for {selectedProfile.firstName} {selectedProfile.lastName}
             </h2>
@@ -91,4 +105,3 @@ function App() {
 }
 
 export default App;
-
