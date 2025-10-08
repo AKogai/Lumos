@@ -23,10 +23,12 @@ const steps: Array<StepConf> = [
   { label: "third" },
 ];
 
+const defaultValue = { relationship: "" };
+
 export const Stepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   // TODO: shape the res as needed for posting to backend - this is just a WIP
-  const [res, setRes] = useState<any>({ relationship: "" });
+  const [res, setRes] = useState<any>(defaultValue);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -38,6 +40,7 @@ export const Stepper = () => {
 
   const handleReset = () => {
     setActiveStep(0);
+    setRes(defaultValue);
   };
 
   const updateRelationshipValue = useCallback((value: string) => {
