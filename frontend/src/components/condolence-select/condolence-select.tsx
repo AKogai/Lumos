@@ -12,13 +12,13 @@ export const CondolenceSelect = ({
 }) => {
   const [name, setName] = useState('');
   const [condolence, setCondolence] = useState(suggestions.familyMessage || '');
-  const [selectedIdx, setSelectedIdx] = useState(0);
+  const [selectedIdx, setSelectedIdx] = useState<string>('familyMessage');
 
-  const updateSelectedIdx = (index: number) => {
-    if (index !== selectedIdx) {
-      setCondolence(suggestions[index]);
+  const updateSelectedIdx = (key: string) => {
+    if (key !== selectedIdx) {
+      setCondolence(suggestions[key]);
     }
-    setSelectedIdx(index);
+    setSelectedIdx(key);
   };
 
   const handleSaveCondolence = () => {
@@ -28,18 +28,18 @@ export const CondolenceSelect = ({
 
   return (
     <Stack spacing={2} direction="column">
-      {Object.values(suggestions)?.map((s, index) => (
+      {Object.entries(suggestions)?.map(([key, s], index) => (
         <Box
           key={index}
           sx={(theme) => ({
             padding: 2,
             borderStyle: 'solid',
             borderWidth: 1,
-            borderColor: index === selectedIdx ? theme.palette.primary.main : ' #ccc',
+            borderColor: key === selectedIdx ? theme.palette.primary.main : ' #ccc',
             borderRadius: 1,
             cursor: 'pointer'
           })}
-          onClick={() => updateSelectedIdx(index)}
+          onClick={() => updateSelectedIdx(key)}
         >
           <Typography>{s}</Typography>
         </Box>
