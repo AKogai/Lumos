@@ -129,7 +129,7 @@ export const Stepper = ({
       }
       if (isCurrentStepValid) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setProgress((prevProgress) => prevProgress + 100 / steps.length);
+        setProgress((prevProgress) => Math.min(prevProgress + 100 / steps.length), 100);
         setIsNextClicked(false);
       }
     } catch (e) {
