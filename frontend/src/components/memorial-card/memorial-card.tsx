@@ -30,7 +30,9 @@ export const MemorialCard = ({
           {memorial.bornDate} – {memorial.deathDate}
         </p>
         <p className="bio">
-          {memorial.biography.length > 160 ? memorial.biography.substring(0, 160) + '...' : memorial.biography}
+          {!selectedMemorialId && memorial.biography.length > 160
+            ? memorial.biography.substring(0, 160) + '...'
+            : memorial.biography}
         </p>
         <p className="location">
           {memorial.placeOfBirth} → {memorial.placeOfDeath}

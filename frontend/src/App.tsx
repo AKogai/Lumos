@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { Stepper } from './components/stepper/stepper';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { getCases } from './api/funeral-cases';
 import { enqueueSnackbar } from 'notistack';
@@ -61,7 +61,7 @@ function App() {
             </div>
           </>
         ) : (
-          <>
+          <Box sx={{ maxWidth: 600, margin: '0 auto', padding: 2 }}>
             <Button variant="outlined" onClick={handleBackToList} sx={{ mb: 2 }}>
               ← Back to list
             </Button>
@@ -80,7 +80,7 @@ function App() {
                 />
               </>
             )}
-          </>
+          </Box>
         )}
       </main>
     </div>
