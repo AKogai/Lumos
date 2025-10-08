@@ -9,14 +9,13 @@ import { enqueueSnackbar } from 'notistack';
 import { MemorialCard } from './components/memorial-card/memorial-card';
 import { MemorialDetails } from './components/memorial-details/memorial-details';
 import { CondolenceSelect } from './components/condolence-select/condolence-select';
-import { ParsedMessages } from './components/stepper/response-parser.helper';
 
 function App() {
   const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedProfileId, setSelectedProfileId] = useState(null);
   const [isWritingCondolence, setIsWritingCondolence] = useState(false);
-  const [condolencesForSelect, setCondolencesForSelect] = useState<ParsedMessages>(null);
+  const [condolencesForSelect, setCondolencesForSelect] = useState<Array<string>>([]);
   const [shouldShowStepper, setShouldShowStepper] = useState(false);
   const queryClient = useQueryClient();
 
@@ -51,7 +50,7 @@ function App() {
       } else {
         if (shouldShowStepper) {
           setShouldShowStepper(false);
-          setCondolencesForSelect(null);
+          setCondolencesForSelect([]);
         } else {
           setIsWritingCondolence(false);
         }
@@ -79,7 +78,7 @@ function App() {
     });
 
     setIsWritingCondolence(false);
-    setCondolencesForSelect(null);
+    setCondolencesForSelect([]);
     setShouldShowStepper(false);
   };
 

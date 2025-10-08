@@ -21,7 +21,7 @@ import { useContentRequest } from '../../hooks/use-content-request';
 import { religionOptions } from './religion-options';
 import { LinearProgress } from '../linear-progress/linear-progress';
 import { MemorialCaseResponse } from '../../api/funeral-cases';
-import { ParsedMessages, parseOpenAIResponse } from './response-parser.helper';
+import { parseOpenAIResponse } from './response-parser.helper';
 
 interface StepConf {
   label: string;
@@ -43,7 +43,7 @@ export const Stepper = ({
   onFinish
 }: {
   memorial: MemorialCaseResponse;
-  onFinish: (suggestions: ParsedMessages) => void;
+  onFinish: (suggestions: Array<string>) => void;
 }) => {
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
@@ -116,7 +116,7 @@ export const Stepper = ({
           {
             onSuccess: (data) => {
               const parsedData = parseOpenAIResponse(data.data.openaiResponse);
-              onFinish(parsedData);
+              onFinish(Object.values(parsedData));
             }
           }
         ).catch(() => {
@@ -146,7 +146,7 @@ export const Stepper = ({
     }
   };
 
-    setProgress(0);
+  setProgress(0);
   const updateRes = useCallback((value) => {
     setRes((prev: ResType) => ({ ...prev, ...value }));
   }, []);
