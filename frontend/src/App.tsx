@@ -5,50 +5,90 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { Typography } from '@mui/material';
 
 function App() {
-  const [health, setHealth] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [profiles, setProfiles] = useState([]);
+  const [selectedProfile, setSelectedProfile] = useState(null);
 
   useEffect(() => {
-    const apiUrl = `${process.env.REACT_APP_API_URL}/api/health`;
+    const apiUrl = `${process.env.REACT_APP_API_URL}/api/memorial`;
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => {
-        setHealth(data);
-        setLoading(false);
+        setProfiles(data);
       })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+      .catch(() => {});
   }, []);
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Full Stack Application</h1>
-        <div className="status-container">
-          <h2>Backend Status</h2>
-          {loading && <p>Loading...</p>}
-          {error && <p className="error">Error: {error}</p>}
-          {health && (
-            <div className="health-info">
-              <p>
-                Status: <span className="success">{health.status}</span>
-              </p>
-              <p>Message: {health.message}</p>
-            </div>
-          )}
+  const handleWriteCondolence = (profile) => {
+    setSelectedProfile(profile);
+  };
 
-          {!loading && !error && (
+  const handleBackToList = () => {
+    setSelectedProfile(null);
+  };
+
+  return (
+    <div className="app">
+      <section className="hero">
+        <h1>Condolence helpers</h1>
+      </section>
+
+      <main className="content">
+        {!selectedProfile ? (
+          <>
+            <h2 className="section-title">Remembering our loved ones</h2>
+            <div className="profiles-grid">
+              {profiles.map((p) => (
+                <div className="profile-card" key={p.id}>
+                  <img
+                    src={
+                      p.profileImageUrl ||
+                      `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        p.firstName + ' ' + p.lastName
+                      )}&background=random`
+                    }
+                    alt={`${p.firstName} ${p.lastName}`}
+                  />
+                  <div className="profile-content">
+                    <h3>
+                      {p.firstName} {p.middleName ? p.middleName + ' ' : ''}
+                      {p.lastName}
+                    </h3>
+                    <p className="lifespan">
+                      {p.bornDate} – {p.deathDate}
+                    </p>
+                    <p className="bio">
+                      {p.biography.length > 160 ? p.biography.substring(0, 160) + '...' : p.biography}
+                    </p>
+                    <p className="location">
+                      {p.placeOfBirth} → {p.placeOfDeath}
+                    </p>
+                    <button type="button" className="read-more" onClick={() => handleWriteCondolence(p)}>
+                      Write condolence →
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="memorial-stepper">
+            <button className="back-btn" onClick={handleBackToList}>
+              ← Back to list
+            </button>
+            <h2 className="section-title">
+              Write a condolence for {selectedProfile.firstName} {selectedProfile.lastName}
+            </h2>
             <ErrorBoundary fallback={<Typography>Something went wrong in the Stepper component.</Typography>}>
+              {/* TODO: We could pass the id to the Stepper component */}
+              {/* <Stepper profile={selectedProfile} /> */}
               <Stepper />
             </ErrorBoundary>
-          )}
-        </div>
-      </header>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
 
 export default App;
+
